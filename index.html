@@ -1,0 +1,5004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GCSE Higher Maths Revision Companion</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Supabase client for account sign-in and cloud saves -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Babel Compiler -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-900 text-slate-100">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useRef, useCallback } = React;
+
+    const supabaseClient = window.supabase.createClient(
+      'https://uctmjfklyoahkfxhkkqi.supabase.co',
+      'sb_publishable_Ih0ZKevHI0sz4AY03iIS_Q_3e9E_hR-'
+    );
+
+    // Lucide Icons Wrapper: renders an icon from the Lucide CDN into a span React owns
+    const Icon = ({ names, className = "w-5 h-5" }) => {
+      const ref = useRef(null);
+      useEffect(() => {
+        const el = ref.current;
+        const lucide = window.lucide;
+        if (!el || !lucide || !lucide.icons) return;
+        const key = names.find((n) => lucide.icons[n]);
+        el.innerHTML = '';
+        if (!key) return;
+        const svg = lucide.createElement(lucide.icons[key]);
+        svg.setAttribute('class', className);
+        el.appendChild(svg);
+      }, [names.join(','), className]);
+      return <span ref={ref} className="inline-flex shrink-0"></span>;
+    };
+
+    const makeIcon = (...names) => ({ className }) => <Icon names={names} className={className} />;
+    const AlertCircle = makeIcon('CircleAlert', 'AlertCircle');
+    const ArrowRight = makeIcon('ArrowRight');
+    const BookOpen = makeIcon('BookOpen');
+    const Check = makeIcon('Check');
+    const CheckCircle = makeIcon('CircleCheckBig', 'CheckCircle', 'CircleCheck');
+    const CheckCircle2 = makeIcon('CircleCheck', 'CheckCircle2');
+    const ChevronDown = makeIcon('ChevronDown');
+    const ChevronUp = makeIcon('ChevronUp');
+    const Coins = makeIcon('Coins');
+    const Copy = makeIcon('Copy');
+    const Eye = makeIcon('Eye');
+    const HelpCircle = makeIcon('CircleHelp', 'HelpCircle', 'CircleQuestionMark');
+    const Home = makeIcon('House', 'Home');
+    const Search = makeIcon('Search');
+    const ShoppingBag = makeIcon('ShoppingBag');
+    const Sparkles = makeIcon('Sparkles');
+    const StickyNote = makeIcon('StickyNote');
+    const Target = makeIcon('Target');
+    const Lock = makeIcon('Lock');
+    const Star = makeIcon('Star');
+    const User = makeIcon('User');
+    const XCircle = makeIcon('CircleX', 'XCircle');
+
+const CURRICULUM = [ 
+
+  { 
+
+    strand: "Number", 
+
+    icon: "🔢", 
+
+    topics: [ 
+
+      { name: "Multiply Decimals", clip: "66a" }, 
+
+      { name: "Estimations", clip: "91" }, 
+
+      { name: "Laws of Indices", clip: "131" }, 
+
+      { name: "Negative Indices", clip: "154" }, 
+
+      { name: "Fractional Indices", clip: "188" }, 
+
+      { name: "Highest Common Factor", clip: "79" }, 
+
+      { name: "Lowest Common Multiple", clip: "80" }, 
+
+      { name: "Product of Prime Factors", clip: "78" }, 
+
+      { name: "Standard Form", clip: "83" }, 
+
+      { name: "Surds", clip: "207a" }, 
+
+      { name: "Simplifying Surds", clip: "207b" }, 
+
+      { name: "Rationalising Fractional Surds", clip: "207c" }, 
+
+      { name: "Fractions – adding and subtracting", clip: "N36" }, 
+
+      { name: "Fractions – multiplying", clip: "73" }, 
+
+      { name: "Fractions – dividing", clip: "74" }, 
+
+      { name: "Recurring Decimals", clip: "177" }, 
+
+      { name: "Percentages of an Amount (Calc)", clip: "86" }, 
+
+      { name: "Percentages of an Amount (Non-Calc)", clip: "87" }, 
+
+      { name: "Reverse Percentages", clip: "109" }, 
+
+      { name: "Error Intervals", clip: "155a" }, 
+
+      { name: "Calculating with Bounds", clip: "206" } 
+
+    ] 
+
+  }, 
+
+  { 
+
+    strand: "Algebra", 
+
+    icon: "📐", 
+
+    topics: [ 
+
+      { name: "Collecting Like Terms", clip: "33" }, 
+
+      { name: "Substitution", clip: "95" }, 
+
+      { name: "Expanding and Simplifying single brackets", clip: "134a" }, 
+
+      { name: "Expanding and Simplifying double brackets", clip: "134b" }, 
+
+      { name: "Expanding and Simplifying triple brackets", clip: "178" }, 
+
+      { name: "Factorising Expressions", clip: "94" }, 
+
+      { name: "Factorising and solving Quadratics", clip: "157a" }, 
+
+      { name: "Rearranging Formulae", clip: "190" }, 
+
+      { name: "Solving Equations", clip: "135a" }, 
+
+      { name: "Linear Sequences", clip: "103" }, 
+
+      { name: "Quadratic Sequences", clip: "213" }, 
+
+      { name: "Geometric Sequences", clip: "163" }, 
+
+      { name: "Linear Graphs", clip: "159a" }, 
+
+      { name: "Quadratic Graphs", clip: "133a" }, 
+
+      { name: "Cubic and Reciprocal Graphs", clip: "161a" }, 
+
+      { name: "Perpendicular Lines", clip: "208" }, 
+
+      { name: "Equations & Tangents of Circles", clip: "197" }, 
+
+      { name: "Forming and Solving Equations", clip: "137" }, 
+
+      { name: "The Quadratic Formula", clip: "191a" }, 
+
+      { name: "Completing the Square", clip: "209a" }, 
+
+      { name: "Solving Linear Inequalities", clip: "139" }, 
+
+      { name: "Graphical Inequalities", clip: "181a" }, 
+
+      { name: "Solving Quadratic Inequalities", clip: "212" }, 
+
+      { name: "Linear Simultaneous Equations", clip: "162" }, 
+
+      { name: "Quadratic Simultaneous Equations", clip: "211a" }, 
+
+      { name: "Iterations", clip: "180" }, 
+
+      { name: "Function Calculations", clip: "36" }, 
+
+      { name: "Inverse Functions", clip: "214a" }, 
+
+      { name: "Composite Functions", clip: "215" }, 
+
+      { name: "Simplifying Algebraic Fractions", clip: "210a" }, 
+
+      { name: "Algebraic Fraction Calculations", clip: "210b" }, 
+
+      { name: "Graph Transformations", clip: "196a" }, 
+
+      { name: "Algebraic Proof", clip: "193" } 
+
+    ] 
+
+  }, 
+
+  { 
+
+    strand: "Geometry", 
+
+    icon: "📏", 
+
+    topics: [ 
+
+      { name: "Pythagoras Theorem", clip: "150b" }, 
+
+      { name: "3D Pythagoras", clip: "217" }, 
+
+      { name: "SOHCAHTOA", clip: "168" }, 
+
+      { name: "Sine Rule", clip: "202a" }, 
+
+      { name: "Cosine Rule", clip: "202b" }, 
+
+      { name: "3D Trigonometry", clip: "218" }, 
+
+      { name: "Area of a Triangle", clip: "203" }, 
+
+      { name: "Exact Trigonometry", clip: "173" }, 
+
+      { name: "Trigonometric Graphs – Sin and Cos", clip: "195a" }, 
+
+      { name: "Trigonometric Graphs – Tan", clip: "195b" }, 
+
+      { name: "Area of 2D Shapes", clip: "G24" }, 
+
+      { name: "Angles in Parallel Lines", clip: "120" }, 
+
+      { name: "Angles in Polygons", clip: "123" }, 
+
+      { name: "Plans & Elevations", clip: "51" }, 
+
+      { name: "Constructing perpendiculars – bisecting a line", clip: "145a" }, 
+
+      { name: "Constructing perpendiculars – from any point", clip: "145b" }, 
+
+      { name: "Bisecting an angle", clip: "145c" }, 
+
+      { name: "Loci", clip: "146" }, 
+
+      { name: "Area of circles", clip: "117" }, 
+
+      { name: "Circumference of Circles", clip: "118" }, 
+
+      { name: "Circle Sectors", clip: "167" }, 
+
+      { name: "Surface Area of 3D Shapes", clip: "114b" }, 
+
+      { name: "Volume of 3D Shapes", clip: "119" }, 
+
+      { name: "Cones", clip: "172" }, 
+
+      { name: "Spheres", clip: "169" }, 
+
+      { name: "Transformations", clip: "184" }, 
+
+      { name: "Bearings", clip: "124" }, 
+
+      { name: "Similar Shapes", clip: "201" }, 
+
+      { name: "Congruent Triangles", clip: "166" }, 
+
+      { name: "Circle Theorems", clip: "185a" }, 
+
+      { name: "Vectors", clip: "219" }, 
+
+      { name: "Geometric Proof", clip: "185b" } 
+
+    ] 
+
+  }, 
+
+  { 
+
+    strand: "Ratio and Proportion", 
+
+    icon: "⚖️", 
+
+    topics: [ 
+
+      { name: "Sharing in a Ratio", clip: "106a" }, 
+
+      { name: "Three Part Ratios", clip: "165b" }, 
+
+      { name: "Writing Ratios as Fractions", clip: "165c" }, 
+
+      { name: "Recipes", clip: "39" }, 
+
+      { name: "Exchange Rates", clip: "105" }, 
+
+      { name: "Best Value Purchases", clip: "41" }, 
+
+      { name: "Conversion Graphs", clip: "106b" }, 
+
+      { name: "Compound Interest and depreciation", clip: "164" }, 
+
+      { name: "Direct and Inverse Proportion", clip: "199" }, 
+
+      { name: "Speed, Distance & Time", clip: "142a" }, 
+
+      { name: "Mass, Density & Volume", clip: "142b" }, 
+
+      { name: "Pressure, Force & Area", clip: "142c" }, 
+
+      { name: "Distance-Time graphs", clip: "143" } 
+
+    ] 
+
+  }, 
+
+  { 
+
+    strand: "Statistics and Probability", 
+
+    icon: "📊", 
+
+    topics: [ 
+
+      { name: "Averages", clip: "62" }, 
+
+      { name: "Averages from a Table", clip: "130a" }, 
+
+      { name: "Grouped Frequency Tables", clip: "130b" }, 
+
+      { name: "Scatter Graphs", clip: "129" }, 
+
+      { name: "Frequency Polygons", clip: "65b" }, 
+
+      { name: "Sampling and Bias", clip: "176a" }, 
+
+      { name: "Pie Charts", clip: "128a" }, 
+
+      { name: "Interquartile Range", clip: "152a" }, 
+
+      { name: "Box Plots", clip: "187b" }, 
+
+      { name: "Averages from a Stem and Leaf", clip: "128b" }, 
+
+      { name: "Cumulative Frequency Graphs", clip: "187a" }, 
+
+      { name: "Histograms", clip: "205" }, 
+
+      { name: "Probability from a Table", clip: "59" }, 
+
+      { name: "Relative Frequency", clip: "125" }, 
+
+      { name: "Venn Diagrams", clip: "186" }, 
+
+      { name: "Set Theory", clip: "127b" }, 
+
+      { name: "Frequency Trees", clip: "57" }, 
+
+      { name: "Two Way Tables", clip: "61" }, 
+
+      { name: "Probability Trees (Independent)", clip: "151" }, 
+
+      { name: "Probability Trees (Dependent)", clip: "175" } 
+
+    ] 
+
+  } 
+
+]; 
+
+ 
+
+const ALL_TOPICS = CURRICULUM.flatMap(strandObj =>  
+
+  strandObj.topics.map((t, idx) => ({ 
+
+    id: `${strandObj.strand.toLowerCase().replace(/\s+/g, '')}-${idx}-${t.name.toLowerCase().replace(/\s+/g, '')}`, 
+
+    strand: strandObj.strand, 
+
+    name: t.name, 
+
+    clip: t.clip 
+
+  })) 
+
+); 
+
+ 
+
+const PET_SPECIES = [ 
+
+  { id: 'cat', name: 'Cosy Cat', color: '#f59e0b', bg: '#fef3c7' }, 
+
+  { id: 'fox', name: 'Clever Fox', color: '#ea580c', bg: '#ffedd5' }, 
+
+  { id: 'bunny', name: 'Fluffy Bunny', color: '#ec4899', bg: '#fce7f3' }, 
+
+  { id: 'owl', name: 'Wise Owl', color: '#8b5cf6', bg: '#ede9fe' }, 
+
+  { id: 'bear', name: 'Honey Bear', color: '#d97706', bg: '#fef3c7' }, 
+
+  { id: 'axolotl', name: 'Pocket Axolotl', color: '#f43f5e', bg: '#ffe4e6' } 
+
+]; 
+
+ 
+
+/* ================= LEVELS & XP ================= */
+
+const MAX_LEVEL = 20;
+
+// XP needed to go from `level` to `level + 1`. Level 1 -> 2 takes 100 XP (about 10 topics categorised).
+const xpToNextLevel = (level) => 100 + (level - 1) * 10;
+
+const getLevelInfo = (xp = 0) => {
+  let level = 1;
+  let remaining = xp;
+  while (level < MAX_LEVEL && remaining >= xpToNextLevel(level)) {
+    remaining -= xpToNextLevel(level);
+    level++;
+  }
+  const needed = level < MAX_LEVEL ? xpToNextLevel(level) : 0;
+  return {
+    level,
+    intoLevel: remaining,
+    needed,
+    pct: needed ? Math.round((remaining / needed) * 100) : 100,
+    isMax: level >= MAX_LEVEL
+  };
+};
+
+const XP_REWARDS = {
+  firstAssessment: 10,
+  redToOrange: 10,
+  redToGreen: 25,
+  orangeToGreen: 15,
+  notes: 5,
+  retest: 5
+};
+
+const LEVEL_UP_BONUS_COINS = 50;
+
+/* ================= CUSTOMISATION CATALOGUE ================= */
+
+const SHOP_CATEGORIES = [
+  { id: 'wallpaper', label: 'Wallpapers', basePrice: 60 },
+  { id: 'dye', label: 'Fur Coats', basePrice: 40 },
+  { id: 'headwear', label: 'Hats', basePrice: 40 },
+  { id: 'eyewear', label: 'Glasses & Face', basePrice: 35 },
+  { id: 'wearable', label: 'Clothes', basePrice: 35 },
+  { id: 'habitat', label: 'Furniture', basePrice: 50 }
+];
+
+const SLOT_LABELS = {
+  wallpaper: 'Wallpaper',
+  dye: 'Fur coat',
+  headwear: 'Hat',
+  eyewear: 'Glasses',
+  face: 'Face',
+  neck: 'Neck',
+  back: 'Back',
+  body: 'Top',
+  rug: 'Rug',
+  wall: 'Wall art',
+  wall_right: 'Wall decor',
+  wall_top: 'Ceiling',
+  furniture_left: 'Left corner',
+  furniture_right: 'Right corner',
+  floor_extra: 'Toy'
+};
+
+// Round-robin merge so every level unlocks a mix of item types
+const interleave = (...lists) => {
+  const out = [];
+  const longest = Math.max(...lists.map(l => l.length));
+  for (let i = 0; i < longest; i++) {
+    lists.forEach(l => { if (l[i]) out.push(l[i]); });
+  }
+  return out;
+};
+
+// [id, name, desc, kind, colours, slot]
+const toDefs = (rows, slot) => rows.map(([id, name, desc, kind, c]) => ({ id, name, desc, kind, c, slot }));
+
+// The first item in each category is unlocked at Level 1, the rest are spread from Level 2 to MAX_LEVEL
+const buildCategory = (category, defs) => {
+  const cat = SHOP_CATEGORIES.find(c => c.id === category);
+  return defs.map((def, i) => {
+    const level = i === 0 ? 1 : 2 + Math.floor(((i - 1) * (MAX_LEVEL - 2)) / Math.max(1, defs.length - 2));
+    const price = def.price !== undefined ? def.price : Math.round((cat.basePrice + level * 10) / 5) * 5;
+    return { slot: category, ...def, category, level, price };
+  });
+};
+
+const lg = (...stops) => `linear-gradient(to bottom, ${stops.join(', ')})`;
+
+const WALLPAPER_DEFS = [
+  { id: 'wp_cozy', name: 'Cozy Wood Cabin', desc: 'Warm wooden plank walls with soft indoor lighting.', bg: lg('#fde68a', '#fef3c7', '#fcd34d'), border: '#92400e', pattern: 'planks' },
+  { id: 'wp_graph', name: 'Graph Paper', desc: 'Crisp squared paper, perfect for plotting graphs.', bg: lg('#f8fafc', '#f1f5f9', '#e2e8f0'), border: '#94a3b8', pattern: 'grid' },
+  { id: 'wp_mint', name: 'Mint Stripes', desc: 'Fresh minty stripes for a calm study space.', bg: lg('#6ee7b7', '#ecfdf5', '#a7f3d0'), border: '#059669', pattern: 'stripes' },
+  { id: 'wp_clouds', name: 'Pastel Cloudscape', desc: 'Dreamy sky with soft pink and sky-blue fluffy clouds.', bg: lg('#7dd3fc', '#e0f2fe', '#fbcfe8'), border: '#38bdf8', pattern: 'clouds' },
+  { id: 'wp_bubblegum', name: 'Bubblegum Dots', desc: 'Sweet pink walls with playful polka dots.', bg: lg('#f9a8d4', '#fce7f3', '#f9a8d4'), border: '#db2777', pattern: 'dots' },
+  { id: 'wp_lemon', name: 'Lemon Sherbet', desc: 'Zesty yellow stripes to brighten revision days.', bg: lg('#fde047', '#fefce8', '#fde047'), border: '#ca8a04', pattern: 'stripes' },
+  { id: 'wp_space', name: 'Cosmic Galaxy', desc: 'Deep purple cosmic nebula dotted with twinkling stars.', bg: lg('#020617', '#1e1b4b', '#3b0764'), border: '#312e81', pattern: 'stars', glow: 'space' },
+  { id: 'wp_library', name: 'Study Library', desc: 'Grand library wallpaper lined with classic leather books.', bg: lg('#78350f', '#451a03', '#78350f'), border: '#451a03', pattern: 'books' },
+  { id: 'wp_lavender', name: 'Lavender Dream', desc: 'Soft lilac walls with a delicate diamond trellis.', bg: lg('#c4b5fd', '#f5f3ff', '#ddd6fe'), border: '#7c3aed', pattern: 'diamonds' },
+  { id: 'wp_ocean', name: 'Under the Sea', desc: 'Deep blue water with floating bubbles and a sandy floor.', bg: lg('#22d3ee', '#0e7490', '#164e63'), border: '#155e75', pattern: 'bubbles', floor: 'rgba(253,230,138,0.5)' },
+  { id: 'wp_forest', name: 'Forest Retreat', desc: 'Leafy greens fading into a shady woodland.', bg: lg('#bbf7d0', '#4ade80', '#166534'), border: '#14532d', pattern: 'leaves' },
+  { id: 'wp_chalkboard', name: 'Chalkboard Classroom', desc: 'A dusty green chalkboard wall in a wooden frame.', bg: lg('#14532d', '#166534', '#14532d'), border: '#78350f', pattern: 'chalk' },
+  { id: 'wp_sunset', name: 'Sunset Glow', desc: 'Orange, pink and purple evening sky.', bg: lg('#fb923c', '#f472b6', '#7c3aed'), border: '#9a3412' },
+  { id: 'wp_brick', name: 'Cosy Brick', desc: 'Warm terracotta brick walls.', bg: lg('#c2410c', '#9a3412', '#7c2d12'), border: '#431407', pattern: 'bricks' },
+  { id: 'wp_snow', name: 'Snowy Cabin', desc: 'Frosty blue walls with drifting snowflakes.', bg: lg('#bae6fd', '#f8fafc', '#e0f2fe'), border: '#0284c7', pattern: 'dots', floor: 'rgba(255,255,255,0.6)' },
+  { id: 'wp_candy', name: 'Candy Stripe', desc: 'Sweet-shop diagonal candy stripes.', bg: lg('#fecdd3', '#fff1f2', '#fecdd3'), border: '#e11d48', pattern: 'diagonal' },
+  { id: 'wp_autumn', name: 'Autumn Leaves', desc: 'Crisp orange autumn colours.', bg: lg('#fdba74', '#fed7aa', '#ea580c'), border: '#9a3412', pattern: 'leaves' },
+  { id: 'wp_checker', name: 'Retro Checker', desc: 'Bold black and white checkerboard.', bg: lg('#f8fafc', '#f1f5f9', '#e2e8f0'), border: '#0f172a', pattern: 'checker' },
+  { id: 'wp_desert', name: 'Desert Dunes', desc: 'Golden sandy dunes under a hot sky.', bg: lg('#fde68a', '#fdba74', '#f97316'), border: '#c2410c' },
+  { id: 'wp_cherry', name: 'Cherry Blossom', desc: 'Pale pink walls with falling blossom petals.', bg: lg('#fdf2f8', '#fbcfe8', '#f9a8d4'), border: '#ec4899', pattern: 'petals' },
+  { id: 'wp_disco', name: 'Neon Disco Den', desc: 'Retro neon party room with glowing disco lights.', bg: lg('#701a75', '#581c87', '#164e63'), border: '#c026d3', glow: 'disco' },
+  { id: 'wp_midnight', name: 'Midnight City', desc: 'Late-night slate skies sprinkled with stars.', bg: lg('#0f172a', '#1e293b', '#334155'), border: '#475569', pattern: 'stars' },
+  { id: 'wp_ice', name: 'Ice Palace', desc: 'Shimmering icy crystal walls.', bg: lg('#cffafe', '#e0e7ff', '#a5f3fc'), border: '#06b6d4', pattern: 'diamonds' },
+  { id: 'wp_jungle', name: 'Jungle Canopy', desc: 'Deep tropical jungle greens.', bg: lg('#4d7c0f', '#15803d', '#14532d'), border: '#052e16', pattern: 'leaves' },
+  { id: 'wp_rainbow', name: 'Rainbow Arc', desc: 'Every pastel colour of the rainbow.', bg: 'linear-gradient(to bottom, #fecaca, #fed7aa, #fef08a, #bbf7d0, #bfdbfe, #e9d5ff)', border: '#a855f7' },
+  { id: 'wp_pixel', name: 'Pixel Arcade', desc: 'Glowing neon grid straight out of a retro arcade.', bg: lg('#1e1b4b', '#0f172a', '#1e1b4b'), border: '#22d3ee', pattern: 'neonGrid' },
+  { id: 'wp_volcano', name: 'Lava Lair', desc: 'A fiery volcanic hideout.', bg: lg('#450a0a', '#7f1d1d', '#ea580c'), border: '#7f1d1d' },
+  { id: 'wp_aurora', name: 'Northern Lights', desc: 'Purple and green aurora over a starry sky.', bg: lg('#4c1d95', '#065f46', '#022c22'), border: '#047857', pattern: 'stars' },
+  { id: 'wp_golden', name: 'Golden Hall', desc: 'Gleaming gold striped walls for champions.', bg: lg('#fef3c7', '#fcd34d', '#b45309'), border: '#92400e', pattern: 'goldStripes' },
+  { id: 'wp_royal', name: 'Royal Velvet', desc: 'Rich crimson velvet with a gold lattice.', bg: lg('#4c0519', '#881337', '#4c0519'), border: '#ca8a04', pattern: 'goldDiamonds' },
+  { id: 'wp_supernova', name: 'Supernova', desc: 'A dazzling exploding star. The ultimate backdrop.', bg: 'radial-gradient(circle at 50% 35%, #f0abfc, #7e22ce 45%, #1e1b4b 85%)', border: '#a21caf', pattern: 'stars' }
+];
+
+const DYE_DEFS = [
+  { id: 'dye_default', name: 'Natural Coat', desc: 'Your companion’s classic natural fur.', c: null, price: 0 },
+  ...[
+    ['dye_golden', 'Golden Glow', 'Sparkling golden fur coat aura.', ['#f59e0b', '#fef3c7']],
+    ['dye_snow', 'Snowy White', 'Fluffy fresh-snow white fur.', ['#e2e8f0', '#ffffff']],
+    ['dye_ocean', 'Ocean Blue', 'Cool ocean-blue fur.', ['#0ea5e9', '#e0f2fe']],
+    ['dye_mint', 'Minty Pastel', 'Cool refreshing mint green fur coat.', ['#10b981', '#d1fae5']],
+    ['dye_cocoa', 'Cocoa Brown', 'Rich hot-chocolate brown fur.', ['#92400e', '#fde68a']],
+    ['dye_cherry', 'Sakura Pink', 'Sweet cherry blossom pastel fur.', ['#ec4899', '#fce7f3']],
+    ['dye_lemon', 'Lemon Zest', 'Bright and zingy lemon fur.', ['#facc15', '#fef9c3']],
+    ['dye_storm', 'Storm Grey', 'Sleek rainy-day grey fur.', ['#64748b', '#e2e8f0']],
+    ['dye_galaxy', 'Midnight Purple', 'Mystical dark purple galaxy fur shade.', ['#6366f1', '#c084fc']],
+    ['dye_ginger', 'Ginger Spice', 'Warm ginger fur.', ['#f97316', '#ffedd5']],
+    ['dye_lavender', 'Lavender', 'Soft lavender fur.', ['#a78bfa', '#ede9fe']],
+    ['dye_sky', 'Sky Blue', 'Pale summer-sky fur.', ['#7dd3fc', '#f0f9ff']],
+    ['dye_ruby', 'Ruby Red', 'Bold ruby-red fur.', ['#dc2626', '#fee2e2']],
+    ['dye_peach', 'Peach Fuzz', 'Soft peachy fur.', ['#fdba74', '#fff7ed']],
+    ['dye_forest', 'Forest Green', 'Deep woodland green fur.', ['#15803d', '#dcfce7']],
+    ['dye_coral', 'Coral Reef', 'Bright coral fur.', ['#fb7185', '#ffe4e6']],
+    ['dye_caramel', 'Caramel', 'Sticky-toffee caramel fur.', ['#b45309', '#fef3c7']],
+    ['dye_teal', 'Tropical Teal', 'Tropical lagoon teal fur.', ['#14b8a6', '#ccfbf1']],
+    ['dye_bubblegum', 'Bubblegum', 'Pop-tastic bubblegum pink fur.', ['#f9a8d4', '#fdf2f8']],
+    ['dye_navy', 'Navy Night', 'Deep navy fur.', ['#2563eb', '#bfdbfe']],
+    ['dye_lime', 'Lime Fizz', 'Fizzy lime-green fur.', ['#84cc16', '#ecfccb']],
+    ['dye_pumpkin', 'Pumpkin Spice', 'Cosy autumn pumpkin fur.', ['#c2410c', '#ffedd5']],
+    ['dye_ice', 'Icy Blue', 'Frosty pale blue fur.', ['#a5f3fc', '#ecfeff']],
+    ['dye_grape', 'Grape Soda', 'Fizzy grape-purple fur.', ['#7c3aed', '#ddd6fe']],
+    ['dye_rose', 'Rose Gold', 'Elegant rose-gold fur.', ['#e8a598', '#fdf2f0']],
+    ['dye_magenta', 'Magenta Pop', 'Vivid magenta fur.', ['#c026d3', '#fae8ff']],
+    ['dye_emerald', 'Emerald', 'Precious emerald-green fur.', ['#059669', '#a7f3d0']],
+    ['dye_cyber', 'Neon Cyber', 'Electric cyan fur with a pink belly.', ['#22d3ee', '#f0abfc']],
+    ['dye_molten', 'Molten Gold', 'Shimmering liquid-gold fur.', ['url(#furMolten)', '#fef9c3']],
+    ['dye_rainbow', 'Prismatic Rainbow', 'Every colour of the rainbow at once!', ['url(#furRainbow)', '#ffffff']]
+  ].map(([id, name, desc, c]) => ({ id, name, desc, c }))
+];
+
+const HAT_DEFS = toDefs([
+  ['hat_party', 'Party Hat', 'Colorful polka dot celebratory party hat!', 'party', ['#ec4899', '#f59e0b']],
+  ['hat_beanie', 'Cozy Knit Beanie', 'Warm knitted winter beanie.', 'beanie', ['#3b82f6', '#1d4ed8', '#ffffff']],
+  ['hat_cap_red', 'Red Baseball Cap', 'A sporty cap for revision on the go.', 'cap', ['#dc2626', '#991b1b']],
+  ['hat_bow_pink', 'Pink Hair Bow', 'A cute pink bow tied at a jaunty angle.', 'bow', ['#f472b6', '#db2777']],
+  ['hat_flower_daisy', 'Daisy Clip', 'A fresh daisy tucked behind one ear.', 'flower', ['#ffffff', '#facc15']],
+  ['hat_wizard', 'Maths Wizard Hat', 'Deep blue pointy hat with golden star motifs.', 'wizard', ['#1e1b4b', '#312e81', '#f59e0b']],
+  ['hat_party_gold', 'Golden Party Hat', 'A shiny gold party hat for big wins.', 'party', ['#facc15', '#ec4899']],
+  ['hat_beanie_pink', 'Strawberry Beanie', 'Strawberry-pink knitted beanie.', 'beanie', ['#f472b6', '#db2777', '#ffffff']],
+  ['hat_cap_blue', 'Sporty Blue Cap', 'A cool blue baseball cap.', 'cap', ['#2563eb', '#1e3a8a']],
+  ['hat_beret', 'Artist Beret', 'A classic red beret for creative thinkers.', 'beret', ['#dc2626', '#7f1d1d']],
+  ['hat_grad', 'Graduation Cap', 'Classic academic mortarboard hat with yellow tassel.', 'grad', ['#1e293b', '#0f172a', '#f59e0b']],
+  ['headphones_blue', 'Focus Headphones', 'Over-ear headphones for study beats.', 'headphones', ['#2563eb', '#1d4ed8']],
+  ['hat_tophat', 'Dapper Top Hat', 'A tall black top hat with a red band.', 'tophat', ['#0f172a', '#dc2626']],
+  ['hat_flowercrown', 'Flower Crown', 'A ring of spring flowers.', 'flowercrown', ['#f472b6', '#facc15', '#a78bfa', '#fef08a']],
+  ['hat_chef', 'Chef’s Hat', 'A puffy white chef’s hat. Cooking up top grades!', 'chef', ['#ffffff', '#cbd5e1']],
+  ['hat_cowboy', 'Cowboy Hat', 'Yeehaw! A tough leather cowboy hat.', 'cowboy', ['#92400e', '#451a03']],
+  ['hat_bow_red', 'Ruby Bow', 'A big shiny ruby-red bow.', 'bow', ['#dc2626', '#991b1b']],
+  ['hat_headphones_pink', 'Pink Beats Headphones', 'Pastel pink headphones.', 'headphones', ['#f472b6', '#db2777']],
+  ['hat_beret_navy', 'Parisian Beret', 'A chic navy beret.', 'beret', ['#1e3a8a', '#0f172a']],
+  ['hat_tiara', 'Silver Tiara', 'A sparkly silver tiara with a sapphire.', 'tiara', ['#cbd5e1', '#3b82f6', '#94a3b8']],
+  ['hat_viking', 'Viking Helmet', 'A horned helmet for fearless revisers.', 'viking', ['#94a3b8', '#fef3c7', '#64748b']],
+  ['hat_propeller', 'Propeller Beanie', 'A silly spinning propeller hat.', 'propeller', ['#ef4444', '#3b82f6', '#facc15']],
+  ['hat_pirate', 'Pirate Captain Hat', 'Arr! A captain’s tricorn hat.', 'pirate', ['#1e293b', '#facc15', '#ffffff']],
+  ['hat_wizard_purple', 'Algebra Archmage Hat', 'A purple wizard hat for algebra masters.', 'wizard', ['#3b0764', '#7e22ce', '#fde047']],
+  ['hat_tophat_purple', 'Magician’s Top Hat', 'A purple top hat with a golden band.', 'tophat', ['#581c87', '#facc15']],
+  ['hat_cap_green', 'Forest Cap', 'A leafy-green baseball cap.', 'cap', ['#16a34a', '#14532d']],
+  ['hat_cowboy_pink', 'Rodeo Pink Hat', 'A bright pink cowboy hat.', 'cowboy', ['#ec4899', '#9d174d']],
+  ['hat_flowercrown_sunset', 'Sunset Flower Crown', 'Orange and red summer flowers.', 'flowercrown', ['#f97316', '#ef4444', '#facc15', '#fef08a']],
+  ['hat_halo', 'Golden Halo', 'A glowing golden halo.', 'halo', ['#facc15']],
+  ['hat_unicorn', 'Unicorn Horn', 'A magical spiralled unicorn horn.', 'unicorn', ['#fbcfe8', '#c084fc']],
+  ['hat_tiara_gold', 'Golden Tiara', 'A gold tiara with a ruby centre.', 'tiara', ['#facc15', '#ef4444', '#ca8a04']],
+  ['hat_headphones_gold', 'Golden Studio Headphones', 'Pro-level gold headphones.', 'headphones', ['#facc15', '#b45309']],
+  ['hat_crown', 'Golden Crown', 'Royal golden crown for revision royalty.', 'crown', ['#f59e0b', '#d97706', '#ef4444', '#3b82f6', '#10b981']],
+  ['hat_crown_diamond', 'Diamond Crown', 'An icy diamond crown. Only for the very best!', 'crown', ['#e0f2fe', '#7dd3fc', '#a855f7', '#22d3ee', '#ec4899']]
+], 'headwear');
+
+const EYE_DEFS = toDefs([
+  ['glasses_nerd', 'Nerd Glasses', 'Stylish thick black frames for high achievers.', 'round', ['#0f172a']],
+  ['glasses_shades', 'Cool Sunglasses', 'Slick dark shades for effortless revision chill.', 'shades', ['#0f172a']],
+  ['glasses_round_red', 'Red Round Specs', 'Bright red round glasses.', 'round', ['#dc2626']],
+  ['glasses_square', 'Smart Square Frames', 'Neat navy square frames.', 'square', ['#1e3a8a']],
+  ['glasses_heart', 'Heart Shades', 'Pink heart-shaped sunglasses.', 'heart', ['#f472b6', '#be185d']],
+  ['glasses_3d', '3D Cinema Glasses', 'Red and blue 3D glasses.', 'threeD', ['#ffffff']],
+  ['glasses_star', 'Star Shades', 'Golden star-shaped shades.', 'star', ['#facc15', '#ca8a04']],
+  ['glasses_cateye', 'Cat-Eye Frames', 'Retro purple cat-eye glasses.', 'cateye', ['#7c3aed', '#c4b5fd']],
+  ['glasses_aviator', 'Aviator Shades', 'Classic pilot sunglasses.', 'aviator', ['#475569', '#1e293b']],
+  ['glasses_goggles', 'Swim Goggles', 'Ready for a revision deep-dive.', 'goggles', ['#0284c7', '#0369a1', '#7dd3fc']],
+  ['glasses_monocle', 'Gentleman’s Monocle', 'A very distinguished monocle.', 'monocle', ['#ca8a04']],
+  ['glasses_round_gold', 'Golden Round Specs', 'Thin gold wire-rimmed glasses.', 'round', ['#ca8a04']],
+  ['glasses_heart_red', 'Love Heart Shades', 'Bold red heart sunglasses.', 'heart', ['#ef4444', '#991b1b']],
+  ['glasses_goggles_lab', 'Lab Safety Goggles', 'Safety first in the science lab!', 'goggles', ['#16a34a', '#15803d', '#dcfce7']],
+  ['glasses_star_pink', 'Pop Star Shades', 'Hot pink star glasses for superstars.', 'star', ['#ec4899', '#9d174d']],
+  ['glasses_aviator_gold', 'Golden Aviators', 'Gold-framed aviators with dark lenses.', 'aviator', ['#ca8a04', '#422006']],
+  ['glasses_cateye_gold', 'Glam Cat-Eye Frames', 'Gold cat-eye frames with a pink tint.', 'cateye', ['#ca8a04', '#fbcfe8']]
+], 'eyewear');
+
+const FACE_DEFS = toDefs([
+  ['face_blush', 'Rosy Cheeks', 'A happy pink blush.', 'blush', ['#f472b6']],
+  ['face_freckles', 'Sun Freckles', 'A sprinkle of summer freckles.', 'freckles', ['#92400e']],
+  ['face_moustache', 'Dapper Moustache', 'A very fancy curled moustache.', 'moustache', ['#1e293b']],
+  ['face_star', 'Star Sticker', 'A gold star for great work.', 'starSticker', ['#facc15']],
+  ['face_eyepatch', 'Pirate Eyepatch', 'Arr, matey!', 'eyepatch', ['#0f172a']],
+  ['face_glitter', 'Glitter Cheeks', 'Sparkly blushing cheeks.', 'glitter', ['#f9a8d4', '#fde047']],
+  ['face_moustache_ginger', 'Ginger Moustache', 'A bushy ginger moustache.', 'moustache', ['#c2410c']],
+  ['face_mask', 'Masquerade Mask', 'A mysterious purple party mask.', 'mask', ['#7e22ce', '#facc15']],
+  ['face_mask_gold', 'Golden Masquerade Mask', 'A dazzling golden mask.', 'mask', ['#facc15', '#ffffff']]
+], 'face');
+
+const NECK_DEFS = toDefs([
+  ['bowtie_red', 'Fancy Bowtie', 'Snazzy red bowtie for exam day.', 'bowtie', ['#ef4444', '#b91c1c']],
+  ['scarf_cozy', 'Cozy Scarf', 'Warm striped winter neck scarf.', 'scarf', ['#dc2626', '#b91c1c', '#fecaca']],
+  ['collar_bell', 'Bell Collar', 'A red collar with a jingly gold bell.', 'collar', ['#dc2626', '#facc15']],
+  ['tie_blue', 'School Tie', 'A smart navy school tie.', 'tie', ['#1d4ed8', '#1e3a8a']],
+  ['bandana_red', 'Red Bandana', 'A spotty red neckerchief.', 'bandana', ['#dc2626', '#ffffff']],
+  ['necklace_pearl', 'Pearl Necklace', 'Elegant creamy pearls.', 'necklace', ['#f8fafc', '#e2e8f0']],
+  ['bowtie_blue', 'Navy Bowtie', 'A classic navy bowtie.', 'bowtie', ['#1e40af', '#1e3a8a']],
+  ['scarf_mint', 'Minty Scarf', 'A fresh mint-green scarf.', 'scarf', ['#10b981', '#047857', '#d1fae5']],
+  ['lei_flower', 'Flower Lei', 'A tropical garland of flowers.', 'lei', ['#f472b6', '#facc15', '#fb923c']],
+  ['tie_red', 'Exam Day Tie', 'A lucky red tie.', 'tie', ['#dc2626', '#7f1d1d']],
+  ['medal_bronze', 'Bronze Medal', 'Third place and proud!', 'medal', ['#2563eb', '#dc2626', '#b45309']],
+  ['collar_pink', 'Sparkly Collar', 'A pink collar with a silver bell.', 'collar', ['#ec4899', '#cbd5e1']],
+  ['bandana_blue', 'Blue Bandana', 'A cool blue neckerchief.', 'bandana', ['#2563eb', '#ffffff']],
+  ['necklace_gold', 'Gold Chain', 'A chunky gold chain.', 'necklace', ['#facc15', '#ca8a04']],
+  ['bowtie_gold', 'Golden Bowtie', 'A gleaming golden bowtie.', 'bowtie', ['#facc15', '#ca8a04']],
+  ['scarf_striped', 'Stripy Rainbow Scarf', 'A long rainbow-striped scarf.', 'scarf', ['#8b5cf6', '#6d28d9', '#fde047']],
+  ['medal_silver', 'Silver Medal', 'A shiny silver medal.', 'medal', ['#2563eb', '#dc2626', '#94a3b8']],
+  ['lei_tropical', 'Tropical Lei', 'Blue and purple island flowers.', 'lei', ['#38bdf8', '#a78bfa', '#ffffff']],
+  ['bandana_pink', 'Polka Dot Bandana', 'A pink spotty neckerchief.', 'bandana', ['#ec4899', '#fdf2f8']],
+  ['necklace_heart', 'Heart Locket', 'A silver chain with a heart locket.', 'locket', ['#cbd5e1', '#f43f5e']],
+  ['medal_gold', 'Gold Medal', 'First place! A gleaming gold medal.', 'medal', ['#2563eb', '#dc2626', '#facc15']]
+], 'neck');
+
+const BACK_DEFS = toDefs([
+  ['cape_hero', 'Revision Hero Cape', 'Flowing superhero cape for top scorers.', 'cape', ['#dc2626', '#991b1b']],
+  ['wings_butterfly', 'Butterfly Wings', 'Delicate orange butterfly wings.', 'butterfly', ['#fb923c', '#f97316']],
+  ['cape_purple', 'Wizard Cloak', 'A flowing purple cloak.', 'cape', ['#7e22ce', '#581c87']],
+  ['wings_bat', 'Bat Wings', 'Spooky leathery bat wings.', 'bat', ['#334155', '#0f172a']],
+  ['wings_angel', 'Angel Wings', 'Soft feathery white wings.', 'angel', ['#ffffff', '#cbd5e1']],
+  ['cape_galaxy', 'Galaxy Cape', 'A cape woven from the night sky.', 'cape', ['#312e81', '#1e1b4b']],
+  ['wings_butterfly_blue', 'Morpho Butterfly Wings', 'Shimmering blue butterfly wings.', 'butterfly', ['#38bdf8', '#2563eb']],
+  ['cape_gold', 'Champion’s Cape', 'A golden cape for true champions.', 'cape', ['#facc15', '#ca8a04']],
+  ['wings_fairy', 'Fairy Wings', 'See-through sparkly fairy wings.', 'fairy', ['#a5f3fc', '#c084fc']]
+], 'back');
+
+const BODY_DEFS = toDefs([
+  ['jumper_cosy', 'Cosy Jumper', 'A snug green knitted jumper.', 'jumper', ['#16a34a', '#bbf7d0']],
+  ['jumper_star', 'Starry Jumper', 'A navy jumper with a big gold star.', 'starJumper', ['#1e3a8a', '#facc15']],
+  ['jumper_pink', 'Fluffy Pink Jumper', 'A soft and fluffy pink jumper.', 'jumper', ['#f472b6', '#fdf2f8']],
+  ['jumper_red', 'Festive Jumper', 'A cheerful red jumper with white stripes.', 'jumper', ['#dc2626', '#ffffff']],
+  ['jumper_galaxy', 'Galaxy Jumper', 'A purple jumper with a glowing star.', 'starJumper', ['#581c87', '#f0abfc']]
+], 'body');
+
+const LEFT_DEFS = toDefs([
+  ['plant_potted', 'Leafy House Plant', 'A lush leafy plant in a terracotta pot.', 'leafy', ['#22c55e', '#c2410c', '#9a3412', '#15803d']],
+  ['plant_cactus', 'Cheerful Cactus', 'A prickly cactus with a pink flower.', 'cactus', ['#16a34a', '#f59e0b', '#b45309', '#f472b6']],
+  ['globe_stand', 'Desk Globe', 'Spin the world on its stand.', 'globe', ['#38bdf8', '#22c55e', '#b45309']],
+  ['plant_sunflower', 'Sunflower Pot', 'A tall sunny sunflower.', 'sunflower', ['#facc15', '#78350f', '#3b82f6', '#1d4ed8']],
+  ['lamp_floor', 'Floor Lamp', 'A tall lamp with a warm glow.', 'floorlamp', ['#f59e0b', '#334155']],
+  ['plant_tulips', 'Tulip Trio', 'Three tulips in a white pot.', 'tulips', ['#ef4444', '#f472b6', '#facc15', '#e2e8f0']],
+  ['beanbag', 'Comfy Beanbag', 'A squashy beanbag for reading breaks.', 'beanbag', ['#8b5cf6', '#c4b5fd']],
+  ['plant_snake', 'Snake Plant', 'Tall striped leaves in a grey pot.', 'snake', ['#15803d', '#64748b', '#475569', '#bef264']],
+  ['telescope', 'Stargazer Telescope', 'For spotting stars after revision.', 'telescope', ['#1e40af', '#94a3b8']],
+  ['plant_monstera', 'Monstera Plant', 'Big split leaves in a woven basket.', 'monstera', ['#16a34a', '#d6a35c', '#a16207', '#14532d']],
+  ['plant_bonsai', 'Bonsai Tree', 'A tiny, carefully trimmed tree.', 'bonsai', ['#16a34a', '#334155', '#1e293b', '#78350f']]
+], 'furniture_left');
+
+const RIGHT_DEFS = toDefs([
+  ['lamp_desk', 'Study Desk & Lamp', 'Wooden side desk with a warm glowing reading lamp.', 'desk', ['#92400e', '#78350f']],
+  ['bookshelf', 'Bookshelf', 'A tall shelf packed with books.', 'bookshelf', ['#92400e', '#78350f']],
+  ['armchair', 'Cosy Armchair', 'A squishy armchair for reading.', 'armchair', ['#0d9488', '#5eead4']],
+  ['fishtank', 'Fish Tank', 'Bubbling tank with two goldfish.', 'fishtank', ['#7dd3fc', '#334155']],
+  ['easel', 'Art Easel', 'A canvas with a geometric masterpiece.', 'easel', ['#b45309', '#ffffff']],
+  ['piano', 'Upright Piano', 'A shiny little piano.', 'piano', ['#1e293b', '#0f172a']],
+  ['arcade', 'Retro Arcade Machine', 'A glowing arcade cabinet.', 'arcade', ['#7c3aed', '#22d3ee']],
+  ['trophy_cabinet', 'Trophy Cabinet', 'A glass cabinet full of golden trophies.', 'trophies', ['#78350f', '#facc15']]
+], 'furniture_right');
+
+const WALL_DEFS = toDefs([
+  ['frame_equation', 'Framed Equation', 'Gold wall frame displaying Pythagoras theorem.', 'frame', { text: 'a² + b² = c²', bg: '#fef3c7', border: '#92400e', color: '#451a03', rotate: -3 }],
+  ['frame_line', 'Straight Line Frame', 'The equation of a straight line.', 'frame', { text: 'y = mx + c', bg: '#e0f2fe', border: '#1e40af', color: '#172554', rotate: 2 }],
+  ['frame_pi', 'Pi Frame', 'The most famous number of all.', 'frame', { text: 'π ≈ 3.14159…', bg: '#fce7f3', border: '#9d174d', color: '#500724', rotate: -2 }],
+  ['frame_circle', 'Circle Area Frame', 'Area of a circle on a chalkboard.', 'frame', { text: 'A = πr²', bg: '#14532d', border: '#a16207', color: '#f0fdf4', rotate: 3 }],
+  ['frame_sohcahtoa', 'SOHCAHTOA Poster', 'Never forget your trig ratios.', 'frame', { text: 'SOH CAH TOA', bg: '#fef9c3', border: '#a16207', color: '#422006', rotate: -2 }],
+  ['frame_quadratic', 'Quadratic Formula Frame', 'The legendary quadratic formula.', 'frame', { text: 'x = (−b ± √(b²−4ac)) ÷ 2a', bg: '#ede9fe', border: '#5b21b6', color: '#2e1065', rotate: 2 }],
+  ['frame_golden', 'Golden Ratio Frame', 'The golden ratio, phi.', 'frame', { text: 'φ = 1.618…', bg: '#fef3c7', border: '#ca8a04', color: '#713f12', rotate: -3 }],
+  ['frame_euler', 'Euler’s Identity Neon', 'The most beautiful equation, in neon.', 'frame', { text: 'e^iπ + 1 = 0', bg: '#0f172a', border: '#ec4899', color: '#f9a8d4', rotate: 0, glow: true }]
+], 'wall');
+
+const WALL_RIGHT_DEFS = toDefs([
+  ['clock_wall', 'Wall Clock', 'Keep an eye on your revision time.', 'clock', ['#1e293b']],
+  ['window_day', 'Sunny Window', 'A bright window with a sunny sky.', 'windowDay', ['#ffffff']],
+  ['poster_planet', 'Planet Poster', 'A ringed planet in deep space.', 'planet', ['#1e1b4b', '#f59e0b']],
+  ['mirror_round', 'Round Mirror', 'A golden round mirror.', 'mirror', ['#ca8a04']],
+  ['painting_mountain', 'Mountain Painting', 'A peaceful mountain landscape.', 'painting', ['#92400e']],
+  ['window_night', 'Starry Window', 'A night-time window with a moon.', 'windowNight', ['#ffffff']],
+  ['shelf_trophy', 'Trophy Shelf', 'A floating shelf with a gold cup.', 'trophyShelf', ['#92400e', '#facc15']],
+  ['certificate', 'Gold Star Certificate', 'Proof of your hard work.', 'certificate', ['#fef3c7', '#ca8a04']]
+], 'wall_right');
+
+const WALL_TOP_DEFS = toDefs([
+  ['lights_fairy', 'Fairy Lights', 'Twinkling magical string lights along the top wall.', 'lights', ['#f59e0b', '#ec4899', '#06b6d4', '#10b981', '#f59e0b']],
+  ['bunting_party', 'Party Bunting', 'Colourful celebration flags.', 'bunting', ['#ef4444', '#facc15', '#22c55e', '#3b82f6']],
+  ['lights_warm', 'Warm Glow Lights', 'Cosy golden string lights.', 'lights', ['#f59e0b', '#fbbf24', '#f97316', '#fbbf24', '#f59e0b']],
+  ['garland_stars', 'Star Garland', 'A string of golden stars.', 'starGarland', ['#facc15']],
+  ['lights_ocean', 'Ocean Lights', 'Cool blue and teal lights.', 'lights', ['#06b6d4', '#3b82f6', '#14b8a6', '#3b82f6', '#06b6d4']],
+  ['bunting_pastel', 'Pastel Bunting', 'Soft pastel flags.', 'bunting', ['#fbcfe8', '#bae6fd', '#bbf7d0', '#fef08a']],
+  ['lights_pastel', 'Pastel Lights', 'Pretty pastel bulbs.', 'lights', ['#f9a8d4', '#c4b5fd', '#a5f3fc', '#bbf7d0', '#fde68a']],
+  ['lights_rainbow', 'Rainbow Lights', 'A full rainbow of glowing bulbs.', 'lights', ['#ef4444', '#f97316', '#facc15', '#22c55e', '#06b6d4', '#3b82f6', '#a855f7']]
+], 'wall_top');
+
+const TOY_DEFS = toDefs([
+  ['toy_ball', 'Playful Toy Ball', 'A bouncy toy ball resting beside your pet.', 'ball', ['#6366f1', '#c7d2fe']],
+  ['toy_books', 'Stack of Revision Books', 'A neat pile of revision guides.', 'books', ['#ef4444', '#3b82f6', '#22c55e']],
+  ['toy_yarn', 'Ball of Yarn', 'A tangly ball of pink wool.', 'yarn', ['#f472b6', '#be185d']],
+  ['toy_dice', 'Giant Dice', 'Perfect for probability practice.', 'dice', ['#ffffff', '#1e293b']],
+  ['toy_duck', 'Rubber Duck', 'A cheerful squeaky duck.', 'duck', ['#facc15', '#f97316']],
+  ['toy_blocks', 'Building Blocks', 'A little tower of wooden blocks.', 'blocks', ['#ef4444', '#3b82f6', '#facc15']],
+  ['toy_football', 'Football', 'Ready for a kickabout at break time.', 'football', ['#ffffff', '#0f172a']],
+  ['toy_calculator', 'Trusty Calculator', 'Your scientific calculator sidekick.', 'calculator', ['#334155', '#bbf7d0']],
+  ['toy_teddy', 'Mini Teddy', 'A tiny teddy for your pet to cuddle.', 'teddy', ['#b45309', '#fde68a']],
+  ['toy_cube', 'Puzzle Cube', 'A colourful twisty puzzle cube.', 'cube', ['#ef4444', '#3b82f6', '#facc15']]
+], 'floor_extra');
+
+const RUG_DEFS = toDefs([
+  ['rug_cozy', 'Cozy Floor Rug', 'Warm oval rug placed right under your pet.', 'oval', ['#f43f5e', '#be123c', '#fecdd3']],
+  ['rug_star', 'Star Pattern Rug', 'Magical golden star patterned round rug.', 'stars', ['#4f46e5', '#fbbf24', '#fcd34d']],
+  ['rug_rings', 'Ripple Rug', 'Concentric blue ripples.', 'rings', ['#3b82f6', '#bfdbfe']],
+  ['rug_stripes', 'Striped Runner', 'A long striped rug with fringes.', 'stripes', ['#f59e0b', '#fef3c7', '#b45309']],
+  ['rug_checker', 'Chessboard Rug', 'Black and white squares. Your move!', 'checker', ['#1e293b', '#f8fafc', '#475569']],
+  ['rug_cloud', 'Fluffy Cloud Rug', 'Soft as a cloud.', 'cloud', ['#ffffff', '#cbd5e1']],
+  ['rug_hex', 'Honeycomb Rug', 'Hexagons, nature’s favourite shape.', 'hex', ['#f59e0b', '#fde68a', '#b45309']],
+  ['rug_rainbow', 'Rainbow Rug', 'A bright rainbow-ringed rug.', 'rainbow', ['#ef4444', '#f97316', '#facc15', '#22c55e', '#3b82f6', '#a855f7']],
+  ['rug_spiral', 'Golden Spiral Rug', 'A Fibonacci golden spiral design.', 'spiral', ['#1e1b4b', '#facc15', '#fde047']]
+], 'rug');
+
+const SHOP_ITEMS = [
+  ...buildCategory('wallpaper', WALLPAPER_DEFS.map(d => ({ ...d, slot: 'wallpaper' }))),
+  ...buildCategory('dye', DYE_DEFS.map(d => ({ ...d, slot: 'dye' }))),
+  ...buildCategory('headwear', HAT_DEFS),
+  ...buildCategory('eyewear', [EYE_DEFS[0], ...interleave(EYE_DEFS.slice(1), FACE_DEFS)]),
+  ...buildCategory('wearable', [NECK_DEFS[0], ...interleave(NECK_DEFS.slice(1), BACK_DEFS, BODY_DEFS)]),
+  ...buildCategory('habitat', [
+    RUG_DEFS[0],
+    ...interleave(LEFT_DEFS, WALL_DEFS, WALL_TOP_DEFS, RIGHT_DEFS, TOY_DEFS, WALL_RIGHT_DEFS, RUG_DEFS.slice(1))
+  ])
+];
+
+const ITEM_BY_ID = Object.fromEntries(SHOP_ITEMS.map(item => [item.id, item]));
+
+const isItemUnlocked = (item, level) => item.level <= level;
+
+// Equip an item, replacing whatever was already in the same slot
+const equipInSlot = (equippedIds, itemId) => {
+  const item = ITEM_BY_ID[itemId];
+  if (!item) return equippedIds;
+  return [...equippedIds.filter(id => ITEM_BY_ID[id]?.slot !== item.slot), itemId];
+};
+
+const getEquippedBySlot = (equippedIds = []) => {
+  const bySlot = {};
+  equippedIds.forEach(id => {
+    const item = ITEM_BY_ID[id];
+    if (item) bySlot[item.slot] = item;
+  });
+  return bySlot;
+};
+
+const STARTER_INVENTORY = ['wp_cozy', 'dye_default', 'hat_party', 'rug_cozy'];
+const STARTER_EQUIPPED = ['hat_party', 'rug_cozy'];
+
+// Estimate XP for students who were already using the app before levels existed
+const estimateXpFromProgress = (progress = {}) => Object.values(progress).reduce((total, p) => {
+  if (!p || !p.status || p.status === 'unassessed') return total;
+  let xp = XP_REWARDS.firstAssessment;
+  if (p.status === 'orange') xp += XP_REWARDS.redToOrange;
+  if (p.status === 'green') xp += XP_REWARDS.redToGreen;
+  if (p.notes) xp += XP_REWARDS.notes;
+  return total + xp;
+}, 0);
+
+/* ================= DRAWING HELPERS ================= */
+
+const starPoints = (cx, cy, R, r, n = 5) => Array.from({ length: n * 2 }, (_, i) => {
+  const a = (Math.PI / n) * i - Math.PI / 2;
+  const rad = i % 2 === 0 ? R : r;
+  return `${(cx + rad * Math.cos(a)).toFixed(1)},${(cy + rad * Math.sin(a)).toFixed(1)}`;
+}).join(' ');
+
+const hexPoints = (cx, cy, r) => Array.from({ length: 6 }, (_, i) => {
+  const a = (Math.PI / 3) * i;
+  return `${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a) * 0.6).toFixed(1)}`;
+}).join(' ');
+
+const heartPath = (cx, cy, s) =>
+  `M ${cx} ${cy + s} C ${cx - 1.6 * s} ${cy - 0.2 * s}, ${cx - 0.6 * s} ${cy - 1.3 * s}, ${cx} ${cy - 0.4 * s} ` +
+  `C ${cx + 0.6 * s} ${cy - 1.3 * s}, ${cx + 1.6 * s} ${cy - 0.2 * s}, ${cx} ${cy + s} Z`;
+
+const Flower = ({ cx, cy, r, petal, centre }) => (
+  <g>
+    {[0, 72, 144, 216, 288].map(deg => {
+      const a = (deg * Math.PI) / 180;
+      return <circle key={deg} cx={cx + r * Math.cos(a)} cy={cy + r * Math.sin(a)} r={r * 0.85} fill={petal} />;
+    })}
+    <circle cx={cx} cy={cy} r={r * 0.7} fill={centre} />
+  </g>
+);
+
+// Points along a quadratic curve, used for necklaces and garlands
+const curvePoints = (x0, y0, cx, cy, x1, y1, n) => Array.from({ length: n }, (_, i) => {
+  const t = i / (n - 1);
+  return {
+    x: (1 - t) * (1 - t) * x0 + 2 * (1 - t) * t * cx + t * t * x1,
+    y: (1 - t) * (1 - t) * y0 + 2 * (1 - t) * t * cy + t * t * y1
+  };
+});
+
+const Mirror = ({ children }) => (
+  <g>
+    {children}
+    <g transform="translate(200 0) scale(-1 1)">{children}</g>
+  </g>
+);
+
+/* ================= PET ACCESSORY RENDERERS (200x200 pet space) ================= */
+
+const HAT_RENDERERS = {
+  party: (c) => (
+    <g>
+      <polygon points="100,20 82,65 118,65" fill={c[0]} />
+      <circle cx="100" cy="18" r="6" fill={c[1]} />
+      <circle cx="94" cy="45" r="3" fill="#ffffff" />
+      <circle cx="105" cy="55" r="3" fill="#3b82f6" />
+      <circle cx="92" cy="60" r="2.5" fill="#10b981" />
+    </g>
+  ),
+  wizard: (c) => (
+    <g>
+      <path d="M 68 66 Q 100 58 132 66 Q 100 62 68 66 Z" fill={c[0]} />
+      <polygon points="100,12 80,62 120,62" fill={c[1]} />
+      <polygon points="100,25 103,32 110,32 104,36 106,43 100,38 94,43 96,36 90,32 97,32" fill={c[2]} />
+    </g>
+  ),
+  crown: (c) => (
+    <g>
+      <polygon points="76,62 72,38 88,48 100,32 112,48 128,38 124,62" fill={c[0]} stroke={c[1]} strokeWidth="2" />
+      <circle cx="72" cy="36" r="3" fill={c[2]} />
+      <circle cx="100" cy="30" r="4" fill={c[3]} />
+      <circle cx="128" cy="36" r="3" fill={c[4]} />
+    </g>
+  ),
+  beanie: (c) => (
+    <g>
+      <path d="M 68 65 Q 100 35 132 65 Z" fill={c[0]} />
+      <rect x="66" y="60" width="68" height="12" rx="4" fill={c[1]} />
+      <circle cx="100" cy="35" r="7" fill={c[2]} />
+    </g>
+  ),
+  grad: (c) => (
+    <g>
+      <polygon points="100,30 142,48 100,60 58,48" fill={c[0]} />
+      <rect x="80" y="52" width="40" height="14" rx="2" fill={c[1]} />
+      <line x1="100" y1="48" x2="135" y2="60" stroke={c[2]} strokeWidth="2.5" />
+      <circle cx="135" cy="62" r="3" fill={c[2]} />
+    </g>
+  ),
+  headphones: (c) => (
+    <g>
+      <path d="M 68 88 C 68 35 132 35 132 88" stroke={c[0]} strokeWidth="6" fill="none" strokeLinecap="round" />
+      <rect x="60" y="76" width="12" height="24" rx="6" fill={c[1]} />
+      <rect x="128" y="76" width="12" height="24" rx="6" fill={c[1]} />
+    </g>
+  ),
+  tophat: (c) => (
+    <g>
+      <rect x="77" y="18" width="46" height="44" rx="3" fill={c[0]} />
+      <rect x="77" y="47" width="46" height="8" fill={c[1]} />
+      <ellipse cx="100" cy="63" rx="36" ry="7" fill={c[0]} />
+    </g>
+  ),
+  cap: (c) => (
+    <g>
+      <path d="M 64 66 Q 64 30 100 30 Q 136 30 136 66 Z" fill={c[0]} />
+      <path d="M 100 31 L 100 64" stroke={c[1]} strokeWidth="2" opacity="0.5" />
+      <path d="M 104 62 Q 148 56 162 68 Q 132 74 104 68 Z" fill={c[1]} />
+      <circle cx="100" cy="31" r="4" fill={c[1]} />
+    </g>
+  ),
+  bow: (c) => (
+    <g transform="rotate(18 124 58)">
+      <path d="M 124 58 L 104 44 Q 98 58 104 72 Z" fill={c[0]} />
+      <path d="M 124 58 L 144 44 Q 150 58 144 72 Z" fill={c[0]} />
+      <circle cx="124" cy="58" r="6" fill={c[1]} />
+    </g>
+  ),
+  flower: (c) => (
+    <g>
+      <Flower cx={126} cy={60} r={7} petal={c[0]} centre={c[1]} />
+      <ellipse cx="114" cy="66" rx="7" ry="3" fill="#22c55e" transform="rotate(-25 114 66)" />
+    </g>
+  ),
+  flowercrown: (c) => (
+    <g>
+      <path d="M 64 70 Q 100 44 136 70" stroke="#16a34a" strokeWidth="3" fill="none" />
+      {[[68, 68], [83, 59], [100, 55], [117, 59], [132, 68]].map(([x, y], i) => (
+        <Flower key={i} cx={x} cy={y} r={4.5} petal={c[i % 3]} centre={c[3]} />
+      ))}
+    </g>
+  ),
+  halo: (c) => (
+    <g>
+      <ellipse cx="100" cy="34" rx="28" ry="8" fill="none" stroke={c[0]} strokeWidth="11" opacity="0.25" />
+      <ellipse cx="100" cy="34" rx="28" ry="8" fill="none" stroke={c[0]} strokeWidth="5" />
+    </g>
+  ),
+  unicorn: (c) => (
+    <g>
+      <polygon points="91,62 100,12 109,62" fill={c[0]} />
+      <path d="M 93 52 L 107 46 M 95 40 L 105 35 M 97 28 L 103 25" stroke={c[1]} strokeWidth="2.5" strokeLinecap="round" />
+    </g>
+  ),
+  chef: (c) => (
+    <g>
+      <circle cx="82" cy="40" r="14" fill={c[0]} stroke={c[1]} strokeWidth="1.5" />
+      <circle cx="118" cy="40" r="14" fill={c[0]} stroke={c[1]} strokeWidth="1.5" />
+      <circle cx="100" cy="30" r="17" fill={c[0]} stroke={c[1]} strokeWidth="1.5" />
+      <rect x="74" y="42" width="52" height="22" rx="3" fill={c[0]} stroke={c[1]} strokeWidth="1.5" />
+      <line x1="76" y1="56" x2="124" y2="56" stroke={c[1]} strokeWidth="1.5" />
+    </g>
+  ),
+  beret: (c) => (
+    <g>
+      <rect x="92" y="38" width="5" height="9" rx="2" fill={c[1]} />
+      <ellipse cx="96" cy="56" rx="37" ry="13" fill={c[0]} transform="rotate(-8 96 56)" />
+    </g>
+  ),
+  cowboy: (c) => (
+    <g>
+      <path d="M 76 62 Q 72 28 88 28 Q 100 36 112 28 Q 128 28 124 62 Z" fill={c[0]} />
+      <rect x="76" y="51" width="48" height="6" fill={c[1]} />
+      <ellipse cx="100" cy="63" rx="54" ry="9" fill={c[0]} stroke={c[1]} strokeWidth="2" />
+    </g>
+  ),
+  viking: (c) => (
+    <g>
+      <path d="M 70 50 Q 46 42 50 14 Q 58 34 78 42 Z" fill={c[1]} />
+      <path d="M 130 50 Q 154 42 150 14 Q 142 34 122 42 Z" fill={c[1]} />
+      <path d="M 66 64 Q 66 28 100 28 Q 134 28 134 64 Z" fill={c[0]} />
+      <rect x="64" y="58" width="72" height="9" rx="3" fill={c[2]} />
+      <circle cx="80" cy="62.5" r="2" fill="#e2e8f0" />
+      <circle cx="100" cy="62.5" r="2" fill="#e2e8f0" />
+      <circle cx="120" cy="62.5" r="2" fill="#e2e8f0" />
+    </g>
+  ),
+  tiara: (c) => (
+    <g>
+      <path d="M 74 64 L 80 48 L 90 56 L 100 38 L 110 56 L 120 48 L 126 64 Z" fill={c[0]} stroke={c[2]} strokeWidth="2" />
+      <circle cx="100" cy="50" r="4.5" fill={c[1]} />
+      <circle cx="81" cy="54" r="2" fill={c[1]} />
+      <circle cx="119" cy="54" r="2" fill={c[1]} />
+    </g>
+  ),
+  propeller: (c) => (
+    <g>
+      <rect x="98" y="20" width="4" height="13" fill="#334155" />
+      <ellipse cx="88" cy="20" rx="12" ry="4" fill={c[0]} />
+      <ellipse cx="112" cy="20" rx="12" ry="4" fill={c[1]} />
+      <circle cx="100" cy="20" r="3" fill={c[2]} />
+      <path d="M 66 64 Q 66 32 100 32 L 100 64 Z" fill={c[0]} />
+      <path d="M 100 32 Q 134 32 134 64 L 100 64 Z" fill={c[1]} />
+      <rect x="64" y="58" width="72" height="8" rx="3" fill={c[2]} />
+    </g>
+  ),
+  pirate: (c) => (
+    <g>
+      <path d="M 52 64 Q 68 26 100 28 Q 132 26 148 64 Q 100 52 52 64 Z" fill={c[0]} />
+      <path d="M 52 64 Q 100 52 148 64" stroke={c[1]} strokeWidth="3" fill="none" />
+      <circle cx="100" cy="44" r="6" fill={c[2]} />
+      <circle cx="98" cy="43" r="1.3" fill={c[0]} />
+      <circle cx="102" cy="43" r="1.3" fill={c[0]} />
+      <path d="M 92 54 L 108 48 M 92 48 L 108 54" stroke={c[2]} strokeWidth="2" strokeLinecap="round" />
+    </g>
+  )
+};
+
+const EYE_RENDERERS = {
+  round: (c) => (
+    <g>
+      <circle cx="82" cy="90" r="14" fill="none" stroke={c[0]} strokeWidth="3.5" />
+      <circle cx="118" cy="90" r="14" fill="none" stroke={c[0]} strokeWidth="3.5" />
+      <line x1="96" y1="90" x2="104" y2="90" stroke={c[0]} strokeWidth="3.5" />
+    </g>
+  ),
+  shades: (c) => (
+    <g>
+      <path d="M 66 84 L 98 84 L 94 102 L 70 102 Z" fill={c[0]} />
+      <path d="M 102 84 L 134 84 L 130 102 L 106 102 Z" fill={c[0]} />
+      <line x1="98" y1="88" x2="102" y2="88" stroke={c[0]} strokeWidth="3" />
+      <line x1="72" y1="88" x2="88" y2="96" stroke="#ffffff" strokeWidth="1.5" opacity="0.6" />
+      <line x1="108" y1="88" x2="124" y2="96" stroke="#ffffff" strokeWidth="1.5" opacity="0.6" />
+    </g>
+  ),
+  square: (c) => (
+    <g>
+      <rect x="68" y="79" width="28" height="22" rx="4" fill="none" stroke={c[0]} strokeWidth="3.5" />
+      <rect x="104" y="79" width="28" height="22" rx="4" fill="none" stroke={c[0]} strokeWidth="3.5" />
+      <line x1="96" y1="88" x2="104" y2="88" stroke={c[0]} strokeWidth="3" />
+    </g>
+  ),
+  heart: (c) => (
+    <g>
+      <path d={heartPath(82, 90, 12)} fill={c[0]} stroke={c[1]} strokeWidth="2" />
+      <path d={heartPath(118, 90, 12)} fill={c[0]} stroke={c[1]} strokeWidth="2" />
+      <line x1="94" y1="86" x2="106" y2="86" stroke={c[1]} strokeWidth="2.5" />
+    </g>
+  ),
+  star: (c) => (
+    <g>
+      <polygon points={starPoints(82, 90, 15, 7)} fill={c[0]} stroke={c[1]} strokeWidth="2" />
+      <polygon points={starPoints(118, 90, 15, 7)} fill={c[0]} stroke={c[1]} strokeWidth="2" />
+      <line x1="94" y1="88" x2="106" y2="88" stroke={c[1]} strokeWidth="2.5" />
+    </g>
+  ),
+  threeD: (c) => (
+    <g>
+      <rect x="64" y="80" width="72" height="21" rx="4" fill={c[0]} stroke="#cbd5e1" strokeWidth="1.5" />
+      <rect x="68" y="83" width="26" height="15" rx="3" fill="#ef4444" opacity="0.85" />
+      <rect x="106" y="83" width="26" height="15" rx="3" fill="#06b6d4" opacity="0.85" />
+    </g>
+  ),
+  cateye: (c) => (
+    <g>
+      <path d="M 62 78 Q 80 84 98 86 L 95 98 Q 82 104 70 98 Q 64 90 62 78 Z" fill={c[1]} fillOpacity="0.35" stroke={c[0]} strokeWidth="3" />
+      <path d="M 138 78 Q 120 84 102 86 L 105 98 Q 118 104 130 98 Q 136 90 138 78 Z" fill={c[1]} fillOpacity="0.35" stroke={c[0]} strokeWidth="3" />
+      <line x1="98" y1="88" x2="102" y2="88" stroke={c[0]} strokeWidth="3" />
+    </g>
+  ),
+  aviator: (c) => (
+    <g>
+      <path d="M 67 84 L 96 84 Q 97 103 82 103 Q 67 103 67 84 Z" fill={c[1]} fillOpacity="0.85" stroke={c[0]} strokeWidth="2.5" />
+      <path d="M 104 84 L 133 84 Q 133 103 118 103 Q 103 103 104 84 Z" fill={c[1]} fillOpacity="0.85" stroke={c[0]} strokeWidth="2.5" />
+      <path d="M 96 86 Q 100 81 104 86" stroke={c[0]} strokeWidth="2.5" fill="none" />
+      <line x1="72" y1="88" x2="84" y2="96" stroke="#ffffff" strokeWidth="1.5" opacity="0.5" />
+      <line x1="109" y1="88" x2="121" y2="96" stroke="#ffffff" strokeWidth="1.5" opacity="0.5" />
+    </g>
+  ),
+  goggles: (c) => (
+    <g>
+      <rect x="56" y="84" width="88" height="10" rx="5" fill={c[0]} />
+      <circle cx="82" cy="90" r="13" fill={c[2]} fillOpacity="0.55" stroke={c[1]} strokeWidth="4" />
+      <circle cx="118" cy="90" r="13" fill={c[2]} fillOpacity="0.55" stroke={c[1]} strokeWidth="4" />
+    </g>
+  ),
+  monocle: (c) => (
+    <g>
+      <circle cx="118" cy="90" r="13" fill="#ffffff" fillOpacity="0.25" stroke={c[0]} strokeWidth="3" />
+      <path d="M 129 97 Q 142 112 128 128" stroke={c[0]} strokeWidth="1.5" fill="none" />
+    </g>
+  ),
+  blush: (c) => (
+    <g>
+      <ellipse cx="73" cy="102" rx="8" ry="5" fill={c[0]} opacity="0.6" />
+      <ellipse cx="127" cy="102" rx="8" ry="5" fill={c[0]} opacity="0.6" />
+    </g>
+  ),
+  glitter: (c) => (
+    <g>
+      <ellipse cx="73" cy="102" rx="8" ry="5" fill={c[0]} opacity="0.6" />
+      <ellipse cx="127" cy="102" rx="8" ry="5" fill={c[0]} opacity="0.6" />
+      <polygon points={starPoints(68, 99, 3.5, 1.4, 4)} fill={c[1]} />
+      <polygon points={starPoints(77, 105, 2.5, 1, 4)} fill="#ffffff" />
+      <polygon points={starPoints(132, 99, 3.5, 1.4, 4)} fill={c[1]} />
+      <polygon points={starPoints(123, 105, 2.5, 1, 4)} fill="#ffffff" />
+    </g>
+  ),
+  freckles: (c) => (
+    <g fill={c[0]} opacity="0.7">
+      {[[71, 99], [77, 102], [70, 105], [129, 99], [123, 102], [130, 105]].map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r="1.6" />
+      ))}
+    </g>
+  ),
+  moustache: (c) => (
+    <path d="M 100 104 C 92 99 80 100 74 110 C 84 106 92 109 100 107 C 108 109 116 106 126 110 C 120 100 108 99 100 104 Z" fill={c[0]} />
+  ),
+  starSticker: (c) => (
+    <polygon points={starPoints(127, 104, 7, 3)} fill={c[0]} stroke="#ca8a04" strokeWidth="1" />
+  ),
+  eyepatch: (c) => (
+    <g>
+      <path d="M 64 80 L 74 85 M 90 84 L 136 72" stroke={c[0]} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="82" cy="90" r="11" fill={c[0]} />
+    </g>
+  ),
+  mask: (c) => (
+    <path
+      d="M 60 82 Q 82 72 100 84 Q 118 72 140 82 Q 138 102 118 101 Q 106 101 100 93 Q 94 101 82 101 Q 62 102 60 82 Z M 75 89 a 7 5 0 1 0 14 0 a 7 5 0 1 0 -14 0 Z M 111 89 a 7 5 0 1 0 14 0 a 7 5 0 1 0 -14 0 Z"
+      fill={c[0]}
+      fillRule="evenodd"
+      stroke={c[1]}
+      strokeWidth="2"
+    />
+  )
+};
+
+const NECK_RENDERERS = {
+  bowtie: (c) => (
+    <g>
+      <polygon points="100,122 84,112 84,132" fill={c[0]} />
+      <polygon points="100,122 116,112 116,132" fill={c[0]} />
+      <circle cx="100" cy="122" r="5" fill={c[1]} />
+    </g>
+  ),
+  scarf: (c) => (
+    <g>
+      <path d="M 70 116 Q 100 126 130 116 Q 100 134 70 116 Z" fill={c[0]} />
+      <rect x="110" y="120" width="14" height="28" rx="3" fill={c[1]} transform="rotate(15 110 120)" />
+      {c[2] && (
+        <g transform="rotate(15 110 120)">
+          <rect x="110" y="128" width="14" height="3" fill={c[2]} />
+          <rect x="110" y="137" width="14" height="3" fill={c[2]} />
+        </g>
+      )}
+    </g>
+  ),
+  tie: (c) => (
+    <g>
+      <path d="M 97 126 L 103 126 L 109 156 L 100 165 L 91 156 Z" fill={c[0]} />
+      <polygon points="93,117 107,117 103,127 97,127" fill={c[1]} />
+    </g>
+  ),
+  collar: (c) => (
+    <g>
+      <path d="M 70 116 Q 100 130 130 116 L 130 122 Q 100 136 70 122 Z" fill={c[0]} />
+      <circle cx="100" cy="133" r="6" fill={c[1]} stroke="#00000033" strokeWidth="1" />
+      <line x1="100" y1="134" x2="100" y2="138" stroke="#00000055" strokeWidth="1.5" />
+    </g>
+  ),
+  bandana: (c) => (
+    <g>
+      <path d="M 70 116 Q 100 128 130 116 L 100 152 Z" fill={c[0]} />
+      {[[100, 132], [90, 124], [110, 124], [100, 142]].map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r="2" fill={c[1]} />
+      ))}
+    </g>
+  ),
+  necklace: (c) => (
+    <g>
+      {curvePoints(74, 116, 100, 138, 126, 116, 11).map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r="3.2" fill={c[0]} stroke={c[1]} strokeWidth="0.8" />
+      ))}
+    </g>
+  ),
+  locket: (c) => (
+    <g>
+      <path d="M 74 116 Q 100 138 126 116" stroke={c[0]} strokeWidth="2" fill="none" />
+      <path d={heartPath(100, 131, 6)} fill={c[1]} stroke={c[0]} strokeWidth="1.5" />
+    </g>
+  ),
+  medal: (c) => (
+    <g>
+      <polygon points="84,114 94,114 104,140 96,142" fill={c[0]} />
+      <polygon points="116,114 106,114 96,140 104,142" fill={c[1]} />
+      <circle cx="100" cy="148" r="10" fill={c[2]} stroke="#00000033" strokeWidth="1.5" />
+      <polygon points={starPoints(100, 148, 5, 2.2)} fill="#ffffff" opacity="0.75" />
+    </g>
+  ),
+  lei: (c) => (
+    <g>
+      {curvePoints(70, 114, 100, 142, 130, 114, 8).map((p, i) => (
+        <Flower key={i} cx={p.x} cy={p.y} r={3.6} petal={c[i % 3]} centre="#fef08a" />
+      ))}
+    </g>
+  )
+};
+
+const BACK_RENDERERS = {
+  cape: (c) => (
+    <path d="M 65 110 Q 100 90 135 110 L 145 175 C 100 185 100 185 55 175 Z" fill={c[0]} stroke={c[1]} strokeWidth="2" />
+  ),
+  angel: (c) => (
+    <Mirror>
+      <path d="M 72 118 C 34 84 14 116 30 150 C 40 140 50 144 60 136 C 64 130 70 128 74 132 Z" fill={c[0]} stroke={c[1]} strokeWidth="2" />
+      <path d="M 40 128 Q 52 126 62 132 M 34 140 Q 46 138 56 140" stroke={c[1]} strokeWidth="1.5" fill="none" />
+    </Mirror>
+  ),
+  butterfly: (c) => (
+    <Mirror>
+      <ellipse cx="54" cy="110" rx="28" ry="20" fill={c[0]} stroke={c[1]} strokeWidth="2" transform="rotate(-25 54 110)" />
+      <ellipse cx="60" cy="146" rx="18" ry="14" fill={c[1]} transform="rotate(20 60 146)" />
+      <circle cx="48" cy="106" r="5" fill="#ffffff" opacity="0.7" />
+    </Mirror>
+  ),
+  fairy: (c) => (
+    <Mirror>
+      <ellipse cx="52" cy="108" rx="30" ry="16" fill={c[0]} fillOpacity="0.55" stroke={c[1]} strokeWidth="1.5" transform="rotate(-30 52 108)" />
+      <ellipse cx="58" cy="142" rx="20" ry="11" fill={c[1]} fillOpacity="0.45" stroke={c[1]} strokeWidth="1.5" transform="rotate(25 58 142)" />
+      <circle cx="40" cy="98" r="2" fill="#ffffff" />
+      <circle cx="56" cy="114" r="1.5" fill="#ffffff" />
+    </Mirror>
+  ),
+  bat: (c) => (
+    <Mirror>
+      <path d="M 74 118 L 28 98 Q 34 114 24 122 Q 38 124 36 138 Q 50 130 56 144 Q 62 130 74 136 Z" fill={c[0]} stroke={c[1]} strokeWidth="2" strokeLinejoin="round" />
+    </Mirror>
+  )
+};
+
+const BODY_RENDERERS = {
+  jumper: (c) => (
+    <g>
+      <ellipse cx="100" cy="142" rx="38" ry="22" fill={c[0]} />
+      <path d="M 66 136 Q 100 144 134 136" stroke={c[1]} strokeWidth="3.5" fill="none" opacity="0.9" />
+      <path d="M 64 147 Q 100 155 136 147" stroke={c[1]} strokeWidth="3.5" fill="none" opacity="0.9" />
+    </g>
+  ),
+  starJumper: (c) => (
+    <g>
+      <ellipse cx="100" cy="142" rx="38" ry="22" fill={c[0]} />
+      <polygon points={starPoints(100, 143, 11, 4.5)} fill={c[1]} />
+    </g>
+  )
+};
+
+// Hats sit a little lower on the owl because it has no separate head
+const HEAD_OFFSET = { owl: 8 };
+
+function PetAvatar({ species, equipped = [], dye = 'dye_default', className = "w-40 h-40" }) {
+  const bySlot = getEquippedBySlot(equipped);
+  const dyeColours = ITEM_BY_ID[dye]?.c;
+
+  // Fur Color Overrides
+  const primaryColor = dyeColours ? dyeColours[0] : null;
+  const secondaryColor = dyeColours ? dyeColours[1] : null;
+
+  const draw = (renderers, slot) => {
+    const item = bySlot[slot];
+    if (!item || !renderers[item.kind]) return null;
+    return renderers[item.kind](item.c);
+  };
+
+  return (
+    <div className={`relative flex items-center justify-center ${className}`}>
+      <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-md overflow-visible">
+        <defs>
+          <linearGradient id="furRainbow" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#f43f5e" />
+            <stop offset="0.25" stopColor="#f59e0b" />
+            <stop offset="0.5" stopColor="#22c55e" />
+            <stop offset="0.75" stopColor="#3b82f6" />
+            <stop offset="1" stopColor="#a855f7" />
+          </linearGradient>
+          <linearGradient id="furMolten" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#fde047" />
+            <stop offset="0.5" stopColor="#f59e0b" />
+            <stop offset="1" stopColor="#b45309" />
+          </linearGradient>
+        </defs>
+
+        {/* Capes & wings (rendered behind body) */}
+        {draw(BACK_RENDERERS, 'back')}
+
+        {/* Pet Shadow */} 
+
+        <ellipse cx="100" cy="175" rx="55" ry="12" fill="#000000" opacity="0.12" /> 
+
+ 
+
+        {/* BASE ANIMAL RENDERINGS */} 
+
+        {species === 'cat' && ( 
+
+          <g> 
+
+            {/* Tail */} 
+
+            <path d="M 140 150 C 170 140 175 110 160 100 C 150 95 145 110 150 125" stroke={primaryColor || "#f59e0b"} strokeWidth="12" strokeLinecap="round" fill="none" /> 
+
+            {/* Body */} 
+
+            <ellipse cx="100" cy="140" rx="42" ry="36" fill={primaryColor || "#f59e0b"} /> 
+
+            <ellipse cx="100" cy="140" rx="28" ry="24" fill={secondaryColor || "#fef3c7"} /> 
+
+            {/* Ears */} 
+
+            <polygon points="65,70 82,38 95,72" fill={primaryColor || "#f59e0b"} /> 
+
+            <polygon points="70,68 82,46 91,70" fill={secondaryColor || "#fce7f3"} /> 
+
+            <polygon points="135,70 118,38 105,72" fill={primaryColor || "#f59e0b"} /> 
+
+            <polygon points="130,68 118,46 109,70" fill={secondaryColor || "#fce7f3"} /> 
+
+            {/* Head */} 
+
+            <circle cx="100" cy="92" r="38" fill={primaryColor || "#f59e0b"} /> 
+
+            {/* Face details */} 
+
+            <circle cx="86" cy="88" r="6" fill="#1e293b" /> 
+
+            <circle cx="114" cy="88" r="6" fill="#1e293b" /> 
+
+            <circle cx="88" cy="86" r="2" fill="#ffffff" /> 
+
+            <circle cx="116" cy="86" r="2" fill="#ffffff" /> 
+
+            <polygon points="100,96 95,92 105,92" fill="#f43f5e" /> 
+
+            <path d="M 95 100 Q 100 105 105 100" stroke="#1e293b" strokeWidth="2" fill="none" strokeLinecap="round" /> 
+
+            {/* Whiskers */} 
+
+            <line x1="60" y1="92" x2="78" y2="94" stroke="#78350f" strokeWidth="2" strokeLinecap="round" /> 
+
+            <line x1="58" y1="99" x2="77" y2="98" stroke="#78350f" strokeWidth="2" strokeLinecap="round" /> 
+
+            <line x1="140" y1="92" x2="122" y2="94" stroke="#78350f" strokeWidth="2" strokeLinecap="round" /> 
+
+            <line x1="142" y1="99" x2="123" y2="98" stroke="#78350f" strokeWidth="2" strokeLinecap="round" /> 
+
+            {/* Paws */} 
+
+            <ellipse cx="78" cy="168" rx="12" ry="8" fill={secondaryColor || "#fef3c7"} stroke={primaryColor || "#f59e0b"} strokeWidth="2" /> 
+
+            <ellipse cx="122" cy="168" rx="12" ry="8" fill={secondaryColor || "#fef3c7"} stroke={primaryColor || "#f59e0b"} strokeWidth="2" /> 
+
+          </g> 
+
+        )} 
+
+ 
+
+        {species === 'fox' && ( 
+
+          <g> 
+
+            <path d="M 140 150 C 180 140 185 90 155 80" stroke={primaryColor || "#ea580c"} strokeWidth="16" strokeLinecap="round" fill="none" /> 
+
+            <path d="M 160 85 C 175 85 180 90 155 80" stroke="#ffffff" strokeWidth="12" strokeLinecap="round" fill="none" /> 
+
+            <ellipse cx="100" cy="140" rx="42" ry="36" fill={primaryColor || "#ea580c"} /> 
+
+            <ellipse cx="100" cy="140" rx="26" ry="24" fill={secondaryColor || "#ffffff"} /> 
+
+            <polygon points="62,68 80,30 95,70" fill={primaryColor || "#ea580c"} /> 
+
+            <polygon points="65,65 80,40 90,68" fill="#1e293b" /> 
+
+            <polygon points="138,68 120,30 105,70" fill={primaryColor || "#ea580c"} /> 
+
+            <polygon points="135,65 120,40 110,68" fill="#1e293b" /> 
+
+            <circle cx="100" cy="92" r="38" fill={primaryColor || "#ea580c"} /> 
+
+            <path d="M 70 95 Q 100 122 130 95 Q 100 80 70 95 Z" fill={secondaryColor || "#ffffff"} /> 
+
+            <circle cx="84" cy="86" r="5" fill="#1e293b" /> 
+
+            <circle cx="116" cy="86" r="5" fill="#1e293b" /> 
+
+            <circle cx="100" cy="98" r="5" fill="#1e293b" /> 
+
+            <ellipse cx="78" cy="168" rx="12" ry="8" fill="#1e293b" /> 
+
+            <ellipse cx="122" cy="168" rx="12" ry="8" fill="#1e293b" /> 
+
+          </g> 
+
+        )} 
+
+ 
+
+        {species === 'bunny' && ( 
+
+          <g> 
+
+            {/* Long Ears */} 
+
+            <ellipse cx="80" cy="38" rx="10" ry="32" fill={primaryColor || "#ec4899"} transform="rotate(-10 80 38)" /> 
+
+            <ellipse cx="80" cy="38" rx="6" ry="24" fill={secondaryColor || "#fce7f3"} transform="rotate(-10 80 38)" /> 
+
+            <ellipse cx="120" cy="38" rx="10" ry="32" fill={primaryColor || "#ec4899"} transform="rotate(10 120 38)" /> 
+
+            <ellipse cx="120" cy="38" rx="6" ry="24" fill={secondaryColor || "#fce7f3"} transform="rotate(10 120 38)" /> 
+
+            {/* Body */} 
+
+            <ellipse cx="100" cy="142" rx="42" ry="36" fill={primaryColor || "#f472b6"} /> 
+
+            <ellipse cx="100" cy="142" rx="28" ry="24" fill={secondaryColor || "#ffffff"} /> 
+
+            {/* Head */} 
+
+            <circle cx="100" cy="92" r="36" fill={primaryColor || "#f472b6"} /> 
+
+            <circle cx="85" cy="88" r="5" fill="#1e293b" /> 
+
+            <circle cx="115" cy="88" r="5" fill="#1e293b" /> 
+
+            <polygon points="100,95 96,92 104,92" fill="#be185d" /> 
+
+            <path d="M 96 98 Q 100 102 104 98" stroke="#be185d" strokeWidth="2" fill="none" /> 
+
+            {/* Cheeks */} 
+
+            <circle cx="76" cy="96" r="6" fill="#fbcfe8" opacity="0.8" /> 
+
+            <circle cx="124" cy="96" r="6" fill="#fbcfe8" opacity="0.8" /> 
+
+            {/* Feet */} 
+
+            <ellipse cx="75" cy="168" rx="14" ry="8" fill="#ffffff" stroke={primaryColor || "#f472b6"} strokeWidth="2" /> 
+
+            <ellipse cx="125" cy="168" rx="14" ry="8" fill="#ffffff" stroke={primaryColor || "#f472b6"} strokeWidth="2" /> 
+
+          </g> 
+
+        )} 
+
+ 
+
+        {species === 'owl' && ( 
+
+          <g> 
+
+            <ellipse cx="100" cy="120" rx="42" ry="48" fill={primaryColor || "#8b5cf6"} /> 
+
+            <ellipse cx="100" cy="132" rx="28" ry="30" fill={secondaryColor || "#ede9fe"} /> 
+
+            <path d="M 90 120 Q 100 125 110 120 M 88 132 Q 100 137 112 132 M 92 144 Q 100 149 108 144" stroke="#7c3aed" strokeWidth="2" fill="none" /> 
+
+            <ellipse cx="56" cy="125" rx="10" ry="26" fill={primaryColor || "#7c3aed"} transform="rotate(15 56 125)" /> 
+
+            <ellipse cx="144" cy="125" rx="10" ry="26" fill={primaryColor || "#7c3aed"} transform="rotate(-15 144 125)" /> 
+
+            <circle cx="82" cy="92" r="16" fill="#ffffff" stroke="#6d28d9" strokeWidth="3" /> 
+
+            <circle cx="118" cy="92" r="16" fill="#ffffff" stroke="#6d28d9" strokeWidth="3" /> 
+
+            <circle cx="82" cy="92" r="7" fill="#1e293b" /> 
+
+            <circle cx="118" cy="92" r="7" fill="#1e293b" /> 
+
+            <circle cx="84" cy="90" r="2.5" fill="#ffffff" /> 
+
+            <circle cx="120" cy="90" r="2.5" fill="#ffffff" /> 
+
+            <polygon points="100,96 93,105 107,105" fill="#f59e0b" /> 
+
+            <path d="M 80 166 L 80 173 M 84 166 L 86 173 M 76 166 L 74 173" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" /> 
+
+            <path d="M 120 166 L 120 173 M 124 166 L 126 173 M 116 166 L 114 173" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" /> 
+
+          </g> 
+
+        )} 
+
+ 
+
+        {species === 'bear' && ( 
+
+          <g> 
+
+            <circle cx="68" cy="62" r="14" fill={primaryColor || "#d97706"} /> 
+
+            <circle cx="68" cy="62" r="8" fill={secondaryColor || "#fef3c7"} /> 
+
+            <circle cx="132" cy="62" r="14" fill={primaryColor || "#d97706"} /> 
+
+            <circle cx="132" cy="62" r="8" fill={secondaryColor || "#fef3c7"} /> 
+
+            <ellipse cx="100" cy="142" rx="44" ry="36" fill={primaryColor || "#d97706"} /> 
+
+            <ellipse cx="100" cy="142" rx="28" ry="24" fill={secondaryColor || "#fef3c7"} /> 
+
+            <circle cx="100" cy="94" r="38" fill={primaryColor || "#d97706"} /> 
+
+            <ellipse cx="100" cy="102" rx="16" ry="12" fill={secondaryColor || "#fef3c7"} /> 
+
+            <ellipse cx="100" cy="98" rx="6" ry="4" fill="#78350f" /> 
+
+            <path d="M 100 102 L 100 106 M 96 106 Q 100 109 104 106" stroke="#78350f" strokeWidth="2" fill="none" /> 
+
+            <circle cx="82" cy="88" r="5" fill="#1e293b" /> 
+
+            <circle cx="118" cy="88" r="5" fill="#1e293b" /> 
+
+            <ellipse cx="76" cy="168" rx="13" ry="8" fill={secondaryColor || "#fef3c7"} stroke={primaryColor || "#d97706"} strokeWidth="2" /> 
+
+            <ellipse cx="124" cy="168" rx="13" ry="8" fill={secondaryColor || "#fef3c7"} stroke={primaryColor || "#d97706"} strokeWidth="2" /> 
+
+          </g> 
+
+        )} 
+
+ 
+
+        {species === 'axolotl' && ( 
+
+          <g> 
+
+            <path d="M 60 85 C 40 70 35 90 58 98" fill={primaryColor || "#f43f5e"} stroke="#e11d48" strokeWidth="2" /> 
+
+            <path d="M 58 98 C 35 95 35 110 58 108" fill={primaryColor || "#f43f5e"} stroke="#e11d48" strokeWidth="2" /> 
+
+            <path d="M 140 85 C 160 70 165 90 142 98" fill={primaryColor || "#f43f5e"} stroke="#e11d48" strokeWidth="2" /> 
+
+            <path d="M 142 98 C 165 95 165 110 142 108" fill={primaryColor || "#f43f5e"} stroke="#e11d48" strokeWidth="2" /> 
+
+            <ellipse cx="100" cy="142" rx="42" ry="34" fill={primaryColor || "#fda4af"} /> 
+
+            <ellipse cx="100" cy="142" rx="26" ry="20" fill={secondaryColor || "#ffe4e6"} /> 
+
+            <ellipse cx="100" cy="95" rx="42" ry="32" fill={primaryColor || "#fda4af"} /> 
+
+            <circle cx="80" cy="92" r="5" fill="#1e293b" /> 
+
+            <circle cx="120" cy="92" r="5" fill="#1e293b" /> 
+
+            <path d="M 93 98 Q 100 105 107 98" stroke="#e11d48" strokeWidth="2.5" fill="none" strokeLinecap="round" /> 
+
+            <circle cx="72" cy="98" r="6" fill="#f43f5e" opacity="0.6" /> 
+
+            <circle cx="128" cy="98" r="6" fill="#f43f5e" opacity="0.6" /> 
+
+            <ellipse cx="76" cy="168" rx="10" ry="7" fill={primaryColor || "#fda4af"} /> 
+
+            <ellipse cx="124" cy="168" rx="10" ry="7" fill={primaryColor || "#fda4af"} /> 
+
+          </g> 
+
+        )} 
+
+ 
+
+        {/* WEARABLE ACCESSORIES RENDERED ON TOP */}
+        {draw(BODY_RENDERERS, 'body')}
+        {draw(NECK_RENDERERS, 'neck')}
+        {draw(EYE_RENDERERS, 'face')}
+        {draw(EYE_RENDERERS, 'eyewear')}
+        <g transform={`translate(0 ${HEAD_OFFSET[species] || 0})`}>
+          {draw(HAT_RENDERERS, 'headwear')}
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+/* ================= ROOM FURNITURE RENDERERS ================= */
+
+const WALL_PATTERNS = {
+  planks: { backgroundImage: 'repeating-linear-gradient(90deg, transparent 0 46px, rgba(120,53,15,0.16) 46px 48px)' },
+  stripes: { backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.3) 0 18px, transparent 18px 36px)' },
+  goldStripes: { backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.25) 0 6px, transparent 6px 30px)' },
+  diagonal: { backgroundImage: 'repeating-linear-gradient(45deg, rgba(244,63,94,0.18) 0 14px, transparent 14px 28px)' },
+  dots: { backgroundImage: 'radial-gradient(rgba(255,255,255,0.55) 2px, transparent 2.5px)', backgroundSize: '22px 22px' },
+  petals: { backgroundImage: 'radial-gradient(rgba(236,72,153,0.3) 3px, transparent 3.5px)', backgroundSize: '34px 30px' },
+  leaves: { backgroundImage: 'radial-gradient(ellipse 6px 3px, rgba(0,0,0,0.12) 90%, transparent 100%)', backgroundSize: '36px 28px' },
+  bubbles: {
+    backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.3) 3px, transparent 4px), radial-gradient(circle, transparent 5px, rgba(255,255,255,0.25) 6px, transparent 7px)',
+    backgroundSize: '44px 44px, 96px 96px',
+    backgroundPosition: '0 0, 22px 30px'
+  },
+  grid: {
+    backgroundImage: 'linear-gradient(rgba(59,130,246,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.2) 1px, transparent 1px)',
+    backgroundSize: '20px 20px'
+  },
+  neonGrid: {
+    backgroundImage: 'linear-gradient(rgba(34,211,238,0.28) 1px, transparent 1px), linear-gradient(90deg, rgba(232,121,249,0.28) 1px, transparent 1px)',
+    backgroundSize: '28px 28px'
+  },
+  stars: {
+    backgroundImage: [
+      'radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, transparent)',
+      'radial-gradient(1px 1px at 80px 70px, #ffffff, transparent)',
+      'radial-gradient(2px 2px at 140px 20px, #fde68a, transparent)',
+      'radial-gradient(1px 1px at 200px 90px, #ffffff, transparent)',
+      'radial-gradient(1.5px 1.5px at 60px 130px, #c4b5fd, transparent)',
+      'radial-gradient(1px 1px at 170px 150px, #ffffff, transparent)'
+    ].join(', '),
+    backgroundSize: '240px 180px'
+  },
+  clouds: {
+    backgroundImage: [
+      'radial-gradient(ellipse 60px 22px at 60px 60px, rgba(255,255,255,0.85), transparent 70%)',
+      'radial-gradient(ellipse 80px 26px at 230px 110px, rgba(255,255,255,0.75), transparent 70%)',
+      'radial-gradient(ellipse 50px 18px at 390px 50px, rgba(255,255,255,0.8), transparent 70%)'
+    ].join(', '),
+    backgroundSize: '460px 220px'
+  },
+  bricks: {
+    backgroundImage: 'linear-gradient(rgba(0,0,0,0.16) 2px, transparent 2px), linear-gradient(90deg, rgba(0,0,0,0.16) 2px, transparent 2px)',
+    backgroundSize: '48px 24px'
+  },
+  diamonds: {
+    backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.3) 0 2px, transparent 2px 24px), repeating-linear-gradient(-45deg, rgba(255,255,255,0.3) 0 2px, transparent 2px 24px)'
+  },
+  goldDiamonds: {
+    backgroundImage: 'repeating-linear-gradient(45deg, rgba(250,204,21,0.25) 0 2px, transparent 2px 26px), repeating-linear-gradient(-45deg, rgba(250,204,21,0.25) 0 2px, transparent 2px 26px)'
+  },
+  checker: {
+    backgroundImage: 'conic-gradient(rgba(15,23,42,0.14) 25%, transparent 0 50%, rgba(15,23,42,0.14) 0 75%, transparent 0)',
+    backgroundSize: '40px 40px'
+  },
+  books: {
+    backgroundImage: 'repeating-linear-gradient(90deg, rgba(185,28,28,0.35) 0 10px, rgba(21,128,61,0.3) 10px 18px, rgba(30,64,175,0.3) 18px 28px, rgba(0,0,0,0.25) 28px 30px)'
+  },
+  chalk: { backgroundImage: 'radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1.5px)', backgroundSize: '9px 9px' }
+};
+
+const RUG_RENDERERS = {
+  oval: (c) => (
+    <g>
+      <ellipse cx="110" cy="32" rx="106" ry="28" fill={c[0]} fillOpacity="0.9" stroke={c[1]} strokeWidth="4" />
+      <ellipse cx="110" cy="32" rx="88" ry="18" fill="none" stroke={c[2]} strokeWidth="2" strokeDasharray="6 4" />
+    </g>
+  ),
+  stars: (c) => (
+    <g>
+      <ellipse cx="110" cy="32" rx="106" ry="28" fill={c[0]} fillOpacity="0.92" stroke={c[1]} strokeWidth="4" />
+      {[[42, 32, 7], [72, 18, 5], [92, 40, 6], [128, 20, 6], [148, 42, 5], [178, 30, 7], [110, 30, 4]].map(([x, y, r], i) => (
+        <polygon key={i} points={starPoints(x, y, r, r * 0.45)} fill={c[2]} />
+      ))}
+    </g>
+  ),
+  rings: (c) => (
+    <g>
+      {[[106, 28], [80, 21], [54, 14], [28, 7]].map(([rx, ry], i) => (
+        <ellipse key={i} cx="110" cy="32" rx={rx} ry={ry} fill={i % 2 === 0 ? c[0] : c[1]} />
+      ))}
+    </g>
+  ),
+  stripes: (c) => (
+    <g>
+      {[8, 14, 20, 26, 32, 38, 44, 50, 56].map(y => (
+        <g key={y}>
+          <line x1="2" y1={y} x2="14" y2={y} stroke={c[2]} strokeWidth="1.5" />
+          <line x1="206" y1={y} x2="218" y2={y} stroke={c[2]} strokeWidth="1.5" />
+        </g>
+      ))}
+      <rect x="12" y="4" width="196" height="56" rx="6" fill={c[0]} stroke={c[2]} strokeWidth="2" />
+      {[30, 70, 110, 150, 190].map(x => (
+        <rect key={x} x={x - 8} y="4" width="16" height="56" fill={c[1]} />
+      ))}
+    </g>
+  ),
+  checker: (c) => (
+    <g>
+      <rect x="14" y="4" width="192" height="56" rx="4" fill={c[1]} stroke={c[2]} strokeWidth="3" />
+      {Array.from({ length: 16 }, (_, i) => {
+        const col = i % 8;
+        const row = Math.floor(i / 8);
+        if ((col + row) % 2 === 1) return null;
+        return <rect key={i} x={14 + col * 24} y={4 + row * 28} width="24" height="28" fill={c[0]} />;
+      })}
+    </g>
+  ),
+  cloud: (c) => (
+    <g fill={c[0]} stroke={c[1]} strokeWidth="2">
+      <ellipse cx="110" cy="40" rx="96" ry="20" />
+      {[[34, 36, 20], [70, 26, 22], [110, 22, 24], [150, 26, 22], [186, 36, 20]].map(([x, y, r], i) => (
+        <circle key={i} cx={x} cy={y} r={r} />
+      ))}
+      <ellipse cx="110" cy="38" rx="94" ry="18" stroke="none" />
+    </g>
+  ),
+  hex: (c) => (
+    <g>
+      <ellipse cx="110" cy="32" rx="106" ry="28" fill={c[0]} stroke={c[2]} strokeWidth="4" />
+      {[[62, 24], [86, 24], [110, 24], [134, 24], [158, 24], [74, 40], [98, 40], [122, 40], [146, 40]].map(([x, y], i) => (
+        <polygon key={i} points={hexPoints(x, y, 11)} fill={c[1]} stroke={c[2]} strokeWidth="1.5" />
+      ))}
+    </g>
+  ),
+  rainbow: (c) => (
+    <g>
+      {c.map((col, i) => (
+        <ellipse key={i} cx="110" cy="32" rx={106 - i * 16} ry={28 - i * 4.2} fill={col} />
+      ))}
+    </g>
+  ),
+  spiral: (c) => {
+    const pts = [];
+    for (let t = 0; t <= 4 * Math.PI; t += 0.15) {
+      const r = 2 * Math.exp(0.3 * t);
+      pts.push(`${(110 + r * Math.cos(t)).toFixed(1)},${(32 + r * Math.sin(t) * 0.26).toFixed(1)}`);
+    }
+    return (
+      <g>
+        <ellipse cx="110" cy="32" rx="106" ry="28" fill={c[0]} stroke={c[1]} strokeWidth="4" />
+        <polyline points={pts.join(' ')} fill="none" stroke={c[2]} strokeWidth="3" strokeLinecap="round" />
+      </g>
+    );
+  }
+};
+
+// Left corner: 60x96, floor at the bottom edge
+const PotBase = ({ c1, c2 }) => (
+  <g>
+    <path d="M 17 72 L 43 72 L 39 94 L 21 94 Z" fill={c1} />
+    <rect x="14" y="67" width="32" height="7" rx="2" fill={c2} />
+  </g>
+);
+
+const leaf = (angle, length, fill, rib, key) => (
+  <g key={key} transform={`translate(30 68) rotate(${angle})`}>
+    <path d={`M 0 0 Q ${length * 0.28} ${-length * 0.5} 0 ${-length} Q ${-length * 0.28} ${-length * 0.5} 0 0 Z`} fill={fill} />
+    <path d={`M 0 0 L 0 ${-length * 0.9}`} stroke={rib} strokeWidth="1.2" />
+  </g>
+);
+
+const LEFT_RENDERERS = {
+  leafy: (c) => (
+    <g>
+      {[[-58, 30], [-32, 42], [-10, 52], [12, 50], [36, 42], [60, 30], [0, 38]].map(([a, l], i) => leaf(a, l, i % 2 ? c[0] : c[3], i % 2 ? c[3] : '#166534', i))}
+      <PotBase c1={c[1]} c2={c[2]} />
+    </g>
+  ),
+  cactus: (c) => (
+    <g>
+      <path d="M 24 50 L 16 50 Q 12 50 12 44 L 12 34" stroke={c[0]} strokeWidth="8" strokeLinecap="round" fill="none" />
+      <path d="M 36 42 L 44 42 Q 48 42 48 36 L 48 28" stroke={c[0]} strokeWidth="8" strokeLinecap="round" fill="none" />
+      <rect x="23" y="20" width="14" height="52" rx="7" fill={c[0]} />
+      <path d="M 30 24 L 30 68" stroke="#14532d" strokeWidth="1" opacity="0.5" />
+      {[[26, 32], [34, 40], [26, 50], [34, 58]].map(([x, y], i) => (
+        <path key={i} d={`M ${x} ${y} l -3 -2 M ${x} ${y} l 3 -2`} stroke="#fef9c3" strokeWidth="1" />
+      ))}
+      <Flower cx={30} cy={19} r={3.5} petal={c[3]} centre="#facc15" />
+      <PotBase c1={c[1]} c2={c[2]} />
+    </g>
+  ),
+  sunflower: (c) => (
+    <g>
+      <path d="M 30 70 L 30 26" stroke="#16a34a" strokeWidth="4" />
+      <ellipse cx="22" cy="54" rx="9" ry="4" fill="#22c55e" transform="rotate(-30 22 54)" />
+      <ellipse cx="38" cy="44" rx="9" ry="4" fill="#22c55e" transform="rotate(30 38 44)" />
+      {Array.from({ length: 12 }, (_, i) => (
+        <ellipse key={i} cx="30" cy="12" rx="3.5" ry="8" fill={c[0]} transform={`rotate(${i * 30} 30 22)`} />
+      ))}
+      <circle cx="30" cy="22" r="7" fill={c[1]} />
+      <PotBase c1={c[2]} c2={c[3]} />
+    </g>
+  ),
+  tulips: (c) => (
+    <g>
+      {[[18, 30, -10], [30, 22, 0], [42, 32, 10]].map(([x, y, a], i) => (
+        <g key={i}>
+          <path d={`M 30 70 Q ${x} 50 ${x} ${y}`} stroke="#16a34a" strokeWidth="2.5" fill="none" />
+          <path d={`M ${x - 6} ${y} L ${x - 6} ${y - 9} L ${x - 3} ${y - 5} L ${x} ${y - 11} L ${x + 3} ${y - 5} L ${x + 6} ${y - 9} L ${x + 6} ${y} Q ${x} ${y + 6} ${x - 6} ${y} Z`} fill={c[i]} transform={`rotate(${a} ${x} ${y})`} />
+        </g>
+      ))}
+      <ellipse cx="24" cy="60" rx="8" ry="3" fill="#22c55e" transform="rotate(-40 24 60)" />
+      <PotBase c1={c[3]} c2="#cbd5e1" />
+    </g>
+  ),
+  snake: (c) => (
+    <g>
+      {[[-14, 44, 18], [-5, 58, 26], [4, 64, 32], [12, 50, 40], [20, 40, 44]].map(([a, l, x], i) => (
+        <path key={i} d={`M ${x} 70 Q ${x - 6} ${70 - l / 2} ${x} ${70 - l} Q ${x + 6} ${70 - l / 2} ${x} 70 Z`} fill={c[0]} stroke={c[3]} strokeWidth="1.2" transform={`rotate(${a} ${x} 70)`} />
+      ))}
+      <PotBase c1={c[1]} c2={c[2]} />
+    </g>
+  ),
+  monstera: (c) => (
+    <g>
+      {[[-40, 40], [0, 50], [40, 40]].map(([a, l], i) => (
+        <g key={i} transform={`translate(30 68) rotate(${a})`}>
+          <path d={`M 0 0 L 0 ${-l * 0.55}`} stroke={c[3]} strokeWidth="2" />
+          <path d={`M 0 ${-l * 0.45} C 18 ${-l * 0.5} 16 ${-l} 0 ${-l} C -16 ${-l} -18 ${-l * 0.5} 0 ${-l * 0.45} Z`} fill={c[0]} />
+          <path d={`M 0 ${-l * 0.5} L 0 ${-l * 0.95} M 0 ${-l * 0.7} L 10 ${-l * 0.62} M 0 ${-l * 0.7} L -10 ${-l * 0.62} M 0 ${-l * 0.84} L 9 ${-l * 0.86} M 0 ${-l * 0.84} L -9 ${-l * 0.86}`} stroke={c[3]} strokeWidth="1.5" />
+        </g>
+      ))}
+      <path d="M 15 70 L 45 70 L 41 94 L 19 94 Z" fill={c[1]} />
+      <path d="M 16 77 L 44 77 M 17 84 L 43 84 M 18 90 L 42 90" stroke={c[2]} strokeWidth="1.5" />
+    </g>
+  ),
+  bonsai: (c) => (
+    <g>
+      <path d="M 30 84 Q 24 72 34 64 Q 42 56 32 46" stroke={c[3]} strokeWidth="5" fill="none" strokeLinecap="round" />
+      <path d="M 33 62 Q 44 58 46 52" stroke={c[3]} strokeWidth="3" fill="none" strokeLinecap="round" />
+      <ellipse cx="22" cy="46" rx="13" ry="8" fill={c[0]} />
+      <ellipse cx="36" cy="38" rx="14" ry="9" fill="#22c55e" />
+      <ellipse cx="47" cy="51" rx="10" ry="6" fill={c[0]} />
+      <rect x="8" y="82" width="44" height="12" rx="3" fill={c[1]} />
+      <rect x="6" y="80" width="48" height="4" rx="2" fill={c[2]} />
+    </g>
+  ),
+  globe: (c) => (
+    <g>
+      <ellipse cx="30" cy="92" rx="14" ry="4" fill={c[2]} />
+      <rect x="28" y="66" width="4" height="26" fill={c[2]} />
+      <path d="M 12 52 A 20 20 0 0 0 46 64" stroke={c[2]} strokeWidth="3" fill="none" />
+      <circle cx="30" cy="48" r="17" fill={c[0]} />
+      <path d="M 20 40 Q 26 34 32 40 Q 30 48 22 48 Z M 34 50 Q 42 48 42 56 Q 36 60 34 50 Z M 30 33 Q 36 32 38 36 Q 34 38 30 33 Z" fill={c[1]} />
+      <ellipse cx="24" cy="42" rx="4" ry="6" fill="#ffffff" opacity="0.25" />
+    </g>
+  ),
+  floorlamp: (c) => (
+    <g>
+      <circle cx="30" cy="26" r="16" fill="#fde68a" opacity="0.5" className="animate-pulse" />
+      <ellipse cx="30" cy="92" rx="13" ry="4" fill={c[1]} />
+      <rect x="28.5" y="24" width="3" height="68" fill={c[1]} />
+      <path d="M 16 28 L 22 8 L 38 8 L 44 28 Z" fill={c[0]} />
+      <circle cx="30" cy="30" r="3" fill="#fef9c3" />
+    </g>
+  ),
+  beanbag: (c) => (
+    <g>
+      <path d="M 6 92 Q 0 64 18 52 Q 30 44 42 52 Q 60 64 54 92 Z" fill={c[0]} />
+      <path d="M 14 70 Q 30 60 46 70" stroke={c[1]} strokeWidth="3" fill="none" opacity="0.7" />
+      <ellipse cx="22" cy="60" rx="6" ry="3" fill="#ffffff" opacity="0.3" transform="rotate(-30 22 60)" />
+    </g>
+  ),
+  telescope: (c) => (
+    <g>
+      <path d="M 30 56 L 14 94 M 30 56 L 46 94 M 30 56 L 30 94" stroke="#475569" strokeWidth="2.5" />
+      <g transform="rotate(-35 30 52)">
+        <rect x="8" y="46" width="44" height="11" rx="3" fill={c[0]} />
+        <rect x="48" y="44" width="8" height="15" rx="2" fill={c[1]} />
+        <rect x="2" y="48" width="8" height="7" rx="2" fill={c[1]} />
+      </g>
+    </g>
+  )
+};
+
+// Right corner: 80x96, floor at the bottom edge
+const RIGHT_RENDERERS = {
+  desk: (c) => (
+    <g>
+      <circle cx="58" cy="30" r="13" fill="#fde68a" opacity="0.55" className="animate-pulse" />
+      <rect x="6" y="56" width="68" height="7" rx="2" fill={c[0]} />
+      <rect x="10" y="63" width="6" height="31" fill={c[1]} />
+      <rect x="64" y="63" width="6" height="31" fill={c[1]} />
+      <rect x="40" y="63" width="24" height="14" fill={c[0]} stroke={c[1]} strokeWidth="1.5" />
+      <circle cx="52" cy="70" r="1.6" fill="#fde68a" />
+      <rect x="12" y="48" width="22" height="4" rx="1" fill="#ef4444" />
+      <rect x="14" y="44" width="20" height="4" rx="1" fill="#3b82f6" />
+      <rect x="13" y="40" width="18" height="4" rx="1" fill="#22c55e" />
+      <ellipse cx="60" cy="55" rx="8" ry="2" fill="#334155" />
+      <path d="M 60 54 L 54 38 L 60 26" stroke="#334155" strokeWidth="2.5" fill="none" />
+      <path d="M 52 24 L 62 18 L 70 30 Z" fill="#f59e0b" />
+      <circle cx="63" cy="29" r="2.5" fill="#fef9c3" />
+    </g>
+  ),
+  bookshelf: (c) => {
+    const colours = ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#a855f7', '#ec4899', '#14b8a6'];
+    return (
+      <g>
+        <rect x="12" y="10" width="56" height="84" rx="2" fill={c[0]} />
+        <rect x="16" y="14" width="48" height="76" fill={c[1]} />
+        {[38, 62, 86].map(y => <rect key={y} x="16" y={y} width="48" height="4" fill={c[0]} />)}
+        {[14, 38, 62].map((shelfTop, row) => (
+          <g key={row}>
+            {Array.from({ length: 7 }, (_, i) => {
+              const h = 15 + ((i * 7 + row * 3) % 7);
+              return <rect key={i} x={18 + i * 6.4} y={shelfTop + 24 - h} width="5.4" height={h} fill={colours[(i + row * 2) % colours.length]} />;
+            })}
+          </g>
+        ))}
+      </g>
+    );
+  },
+  armchair: (c) => (
+    <g>
+      <rect x="14" y="26" width="52" height="46" rx="12" fill={c[0]} />
+      <rect x="6" y="50" width="16" height="34" rx="7" fill={c[0]} />
+      <rect x="58" y="50" width="16" height="34" rx="7" fill={c[0]} />
+      <rect x="20" y="58" width="40" height="22" rx="6" fill={c[1]} />
+      <rect x="12" y="84" width="5" height="10" fill="#78350f" />
+      <rect x="63" y="84" width="5" height="10" fill="#78350f" />
+      <rect x="10" y="80" width="60" height="6" rx="3" fill={c[0]} />
+    </g>
+  ),
+  fishtank: (c) => (
+    <g>
+      <rect x="10" y="66" width="60" height="28" fill="#78350f" />
+      <rect x="14" y="70" width="52" height="20" fill="#92400e" />
+      <rect x="8" y="22" width="64" height="44" rx="3" fill={c[0]} fillOpacity="0.75" stroke={c[1]} strokeWidth="3" />
+      <rect x="8" y="22" width="64" height="7" fill={c[1]} />
+      <rect x="11" y="56" width="58" height="8" fill="#fde68a" />
+      <path d="M 20 62 Q 16 52 22 44 Q 18 38 22 32" stroke="#16a34a" strokeWidth="3" fill="none" />
+      <g>
+        <ellipse cx="44" cy="42" rx="7" ry="4.5" fill="#f97316" />
+        <path d="M 50 42 L 57 37 L 57 47 Z" fill="#f97316" />
+        <circle cx="41" cy="41" r="1" fill="#0f172a" />
+      </g>
+      <g>
+        <ellipse cx="56" cy="52" rx="5" ry="3.2" fill="#facc15" />
+        <path d="M 51 52 L 46 48 L 46 56 Z" fill="#facc15" />
+        <circle cx="58" cy="51" r="0.9" fill="#0f172a" />
+      </g>
+      <circle cx="36" cy="34" r="1.8" fill="none" stroke="#ffffff" strokeWidth="1" />
+      <circle cx="38" cy="30" r="1.2" fill="none" stroke="#ffffff" strokeWidth="1" />
+    </g>
+  ),
+  easel: (c) => (
+    <g>
+      <path d="M 40 10 L 18 94 M 40 10 L 62 94 M 40 30 L 40 94" stroke={c[0]} strokeWidth="3.5" strokeLinecap="round" />
+      <rect x="14" y="16" width="52" height="40" rx="2" fill={c[1]} stroke="#cbd5e1" strokeWidth="1.5" />
+      <rect x="12" y="56" width="56" height="4" rx="1" fill={c[0]} />
+      <polygon points="22,50 38,24 54,50" fill="none" stroke="#3b82f6" strokeWidth="2.5" />
+      <circle cx="54" cy="26" r="5" fill="#f59e0b" />
+      <path d="M 38 50 L 38 38" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="2 2" />
+    </g>
+  ),
+  piano: (c) => (
+    <g>
+      <rect x="6" y="24" width="68" height="60" rx="3" fill={c[0]} />
+      <rect x="6" y="20" width="68" height="6" rx="2" fill={c[1]} />
+      <rect x="10" y="50" width="60" height="12" fill="#ffffff" />
+      {Array.from({ length: 9 }, (_, i) => <line key={i} x1={10 + (i + 1) * 6} y1="50" x2={10 + (i + 1) * 6} y2="62" stroke="#cbd5e1" strokeWidth="0.8" />)}
+      {[0, 1, 3, 4, 5, 7, 8].map(i => <rect key={i} x={14 + i * 6} y="50" width="3.5" height="7" fill={c[1]} />)}
+      <rect x="10" y="84" width="6" height="10" fill={c[1]} />
+      <rect x="64" y="84" width="6" height="10" fill={c[1]} />
+      <rect x="28" y="30" width="24" height="12" rx="1" fill="#fef3c7" />
+    </g>
+  ),
+  arcade: (c) => (
+    <g>
+      <path d="M 16 94 L 16 22 Q 16 10 28 10 L 52 10 Q 64 10 64 22 L 64 94 Z" fill={c[0]} />
+      <rect x="20" y="16" width="40" height="8" rx="2" fill={c[1]} className="animate-pulse" />
+      <rect x="22" y="28" width="36" height="26" rx="2" fill="#0f172a" />
+      <rect x="28" y="36" width="5" height="5" fill="#facc15" />
+      <rect x="40" y="42" width="5" height="5" fill="#f472b6" />
+      <rect x="48" y="32" width="5" height="5" fill={c[1]} />
+      <path d="M 14 60 L 66 60 L 62 70 L 18 70 Z" fill="#1e293b" />
+      <line x1="28" y1="64" x2="28" y2="58" stroke="#94a3b8" strokeWidth="2" />
+      <circle cx="28" cy="57" r="3" fill="#ef4444" />
+      <circle cx="44" cy="65" r="2.5" fill="#22d3ee" />
+      <circle cx="52" cy="65" r="2.5" fill="#facc15" />
+    </g>
+  ),
+  trophies: (c) => (
+    <g>
+      <rect x="10" y="10" width="60" height="84" rx="3" fill={c[0]} />
+      <rect x="15" y="15" width="50" height="74" fill="#e0f2fe" fillOpacity="0.6" />
+      <rect x="15" y="50" width="50" height="3" fill={c[0]} />
+      {[[28, 46], [52, 46], [40, 84]].map(([x, y], i) => (
+        <g key={i}>
+          <path d={`M ${x - 7} ${y - 22} L ${x + 7} ${y - 22} Q ${x + 7} ${y - 10} ${x} ${y - 9} Q ${x - 7} ${y - 10} ${x - 7} ${y - 22} Z`} fill={c[1]} />
+          <rect x={x - 1.5} y={y - 9} width="3" height="5" fill={c[1]} />
+          <rect x={x - 5} y={y - 4} width="10" height="4" fill="#a16207" />
+        </g>
+      ))}
+      <line x1="18" y1="20" x2="26" y2="40" stroke="#ffffff" strokeWidth="1.5" opacity="0.6" />
+    </g>
+  )
+};
+
+// Right-hand wall decor: 64x64
+const WALL_RIGHT_RENDERERS = {
+  clock: (c) => (
+    <g>
+      <circle cx="32" cy="32" r="26" fill="#ffffff" stroke={c[0]} strokeWidth="4" />
+      {Array.from({ length: 12 }, (_, i) => {
+        const a = (i * Math.PI) / 6;
+        return <line key={i} x1={32 + 20 * Math.sin(a)} y1={32 - 20 * Math.cos(a)} x2={32 + 23 * Math.sin(a)} y2={32 - 23 * Math.cos(a)} stroke={c[0]} strokeWidth={i % 3 === 0 ? 2.5 : 1.2} />;
+      })}
+      <line x1="32" y1="32" x2="22" y2="24" stroke={c[0]} strokeWidth="3" strokeLinecap="round" />
+      <line x1="32" y1="32" x2="44" y2="20" stroke={c[0]} strokeWidth="2" strokeLinecap="round" />
+      <circle cx="32" cy="32" r="2.5" fill="#ef4444" />
+    </g>
+  ),
+  windowDay: (c) => (
+    <g>
+      <rect x="4" y="4" width="56" height="56" rx="3" fill="#7dd3fc" stroke={c[0]} strokeWidth="5" />
+      <circle cx="44" cy="18" r="7" fill="#facc15" />
+      <ellipse cx="20" cy="40" rx="11" ry="5" fill="#ffffff" />
+      <ellipse cx="26" cy="37" rx="7" ry="5" fill="#ffffff" />
+      <path d="M 32 4 L 32 60 M 4 32 L 60 32" stroke={c[0]} strokeWidth="4" />
+    </g>
+  ),
+  windowNight: (c) => (
+    <g>
+      <rect x="4" y="4" width="56" height="56" rx="3" fill="#1e1b4b" stroke={c[0]} strokeWidth="5" />
+      <circle cx="44" cy="18" r="8" fill="#fef9c3" />
+      <circle cx="48" cy="15" r="7" fill="#1e1b4b" />
+      {[[14, 14], [22, 46], [46, 44], [16, 26]].map(([x, y], i) => <polygon key={i} points={starPoints(x, y, 2.5, 1)} fill="#ffffff" />)}
+      <path d="M 32 4 L 32 60 M 4 32 L 60 32" stroke={c[0]} strokeWidth="4" />
+    </g>
+  ),
+  mirror: (c) => (
+    <g>
+      <ellipse cx="32" cy="32" rx="24" ry="28" fill="#e0f2fe" stroke={c[0]} strokeWidth="5" />
+      <path d="M 20 20 L 30 12 M 20 30 L 38 16" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" opacity="0.8" />
+    </g>
+  ),
+  planet: (c) => (
+    <g>
+      <rect x="6" y="2" width="52" height="60" rx="2" fill={c[0]} stroke="#e2e8f0" strokeWidth="2" />
+      {[[14, 12], [48, 14], [16, 50], [46, 52], [30, 10]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="1" fill="#ffffff" />)}
+      <circle cx="32" cy="32" r="12" fill={c[1]} />
+      <ellipse cx="32" cy="32" rx="22" ry="6" fill="none" stroke="#fde68a" strokeWidth="2.5" transform="rotate(-20 32 32)" />
+    </g>
+  ),
+  painting: (c) => (
+    <g>
+      <rect x="2" y="10" width="60" height="44" rx="2" fill={c[0]} />
+      <rect x="7" y="15" width="50" height="34" fill="#bae6fd" />
+      <circle cx="46" cy="24" r="5" fill="#facc15" />
+      <polygon points="7,49 24,24 40,49" fill="#64748b" />
+      <polygon points="26,49 40,30 57,49" fill="#475569" />
+      <polygon points="20,30 24,24 28,30" fill="#ffffff" />
+      <rect x="7" y="44" width="50" height="5" fill="#22c55e" />
+    </g>
+  ),
+  trophyShelf: (c) => (
+    <g>
+      <rect x="2" y="50" width="60" height="5" rx="1" fill={c[0]} />
+      <path d="M 14 56 L 18 62 M 50 56 L 46 62" stroke={c[0]} strokeWidth="2.5" />
+      <path d="M 18 16 L 38 16 Q 38 34 28 36 Q 18 34 18 16 Z" fill={c[1]} />
+      <path d="M 18 20 Q 10 20 12 28 Q 14 32 20 30 M 38 20 Q 46 20 44 28 Q 42 32 36 30" stroke={c[1]} strokeWidth="2.5" fill="none" />
+      <rect x="26" y="36" width="4" height="8" fill={c[1]} />
+      <rect x="20" y="44" width="16" height="6" fill="#a16207" />
+      <circle cx="50" cy="42" r="6" fill="#cbd5e1" />
+      <polygon points={starPoints(50, 42, 3, 1.3)} fill="#ffffff" />
+    </g>
+  ),
+  certificate: (c) => (
+    <g>
+      <rect x="2" y="10" width="60" height="44" rx="2" fill={c[0]} stroke={c[1]} strokeWidth="3" />
+      <rect x="7" y="15" width="50" height="34" fill="none" stroke={c[1]} strokeWidth="1" strokeDasharray="2 2" />
+      <path d="M 14 24 L 50 24 M 14 30 L 44 30 M 14 36 L 38 36" stroke="#a16207" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+      <path d="M 44 42 L 40 54 L 46 50 L 50 56 L 52 44 Z" fill="#dc2626" />
+      <circle cx="48" cy="42" r="7" fill={c[1]} />
+      <polygon points={starPoints(48, 42, 4, 1.8)} fill="#fef9c3" />
+    </g>
+  )
+};
+
+// Toys: 32x32, sitting still beside the pet
+const TOY_RENDERERS = {
+  ball: (c) => (
+    <g>
+      <ellipse cx="16" cy="30" rx="10" ry="2" fill="#000000" opacity="0.15" />
+      <circle cx="16" cy="17" r="12" fill={c[0]} stroke={c[1]} strokeWidth="2" />
+      <path d="M 5 14 Q 16 22 27 14" stroke={c[1]} strokeWidth="2.5" fill="none" />
+      <ellipse cx="11" cy="11" rx="3" ry="2" fill="#ffffff" opacity="0.6" />
+    </g>
+  ),
+  yarn: (c) => (
+    <g>
+      <path d="M 26 24 Q 30 30 22 30" stroke={c[0]} strokeWidth="1.5" fill="none" />
+      <circle cx="15" cy="18" r="11" fill={c[0]} />
+      <path d="M 6 14 Q 15 22 24 12 M 7 22 Q 14 12 22 26 M 10 9 Q 20 16 26 20" stroke={c[1]} strokeWidth="1.2" fill="none" />
+    </g>
+  ),
+  dice: (c) => (
+    <g>
+      <rect x="5" y="5" width="22" height="22" rx="4" fill={c[0]} stroke="#cbd5e1" strokeWidth="1.5" />
+      {[[11, 11], [21, 11], [16, 16], [11, 21], [21, 21]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="2" fill={c[1]} />)}
+    </g>
+  ),
+  duck: (c) => (
+    <g>
+      <ellipse cx="15" cy="23" rx="12" ry="7" fill={c[0]} />
+      <circle cx="20" cy="12" r="6.5" fill={c[0]} />
+      <path d="M 26 12 L 31 13 L 26 15 Z" fill={c[1]} />
+      <circle cx="21.5" cy="10.5" r="1.3" fill="#0f172a" />
+      <path d="M 8 22 Q 14 18 18 23" stroke="#eab308" strokeWidth="1.5" fill="none" />
+    </g>
+  ),
+  books: (c) => (
+    <g>
+      <rect x="3" y="22" width="26" height="7" rx="1" fill={c[0]} />
+      <rect x="5" y="15" width="22" height="7" rx="1" fill={c[1]} />
+      <rect x="4" y="8" width="24" height="7" rx="1" fill={c[2]} />
+      <path d="M 26 23 L 26 28 M 24 16 L 24 21 M 25 9 L 25 14" stroke="#ffffff" strokeWidth="1.5" />
+    </g>
+  ),
+  blocks: (c) => (
+    <g>
+      <rect x="2" y="18" width="13" height="13" rx="1.5" fill={c[0]} />
+      <rect x="17" y="18" width="13" height="13" rx="1.5" fill={c[1]} />
+      <rect x="9.5" y="4" width="13" height="13" rx="1.5" fill={c[2]} />
+      <circle cx="8.5" cy="24.5" r="2" fill="#ffffff" opacity="0.6" />
+      <polygon points="23.5,21 27,28 20,28" fill="#ffffff" opacity="0.6" />
+      <rect x="13.5" y="8" width="5" height="5" fill="#ffffff" opacity="0.6" />
+    </g>
+  ),
+  football: (c) => (
+    <g>
+      <ellipse cx="16" cy="30" rx="10" ry="2" fill="#000000" opacity="0.15" />
+      <circle cx="16" cy="17" r="12" fill={c[0]} stroke="#cbd5e1" strokeWidth="1.5" />
+      <polygon points="16,12 20.5,15 19,20 13,20 11.5,15" fill={c[1]} />
+      <path d="M 16 12 L 16 5 M 20.5 15 L 27 13 M 19 20 L 23 26 M 13 20 L 9 26 M 11.5 15 L 5 13" stroke={c[1]} strokeWidth="1.2" />
+    </g>
+  ),
+  calculator: (c) => (
+    <g>
+      <rect x="6" y="2" width="20" height="28" rx="3" fill={c[0]} />
+      <rect x="9" y="5" width="14" height="6" rx="1" fill={c[1]} />
+      {Array.from({ length: 12 }, (_, i) => (
+        <rect key={i} x={9 + (i % 3) * 5} y={14 + Math.floor(i / 3) * 4} width="3.5" height="2.8" rx="0.5" fill={i === 11 ? '#f97316' : '#cbd5e1'} />
+      ))}
+    </g>
+  ),
+  teddy: (c) => (
+    <g>
+      <circle cx="9" cy="6" r="3.5" fill={c[0]} />
+      <circle cx="23" cy="6" r="3.5" fill={c[0]} />
+      <ellipse cx="16" cy="24" rx="10" ry="7.5" fill={c[0]} />
+      <circle cx="16" cy="12" r="8" fill={c[0]} />
+      <ellipse cx="16" cy="15" rx="4" ry="3" fill={c[1]} />
+      <circle cx="13" cy="10" r="1.2" fill="#0f172a" />
+      <circle cx="19" cy="10" r="1.2" fill="#0f172a" />
+      <circle cx="16" cy="14" r="1.2" fill="#0f172a" />
+      <ellipse cx="16" cy="25" rx="5" ry="4" fill={c[1]} />
+    </g>
+  ),
+  cube: (c) => (
+    <g>
+      <polygon points="16,3 29,10 16,17 3,10" fill={c[2]} />
+      <polygon points="3,10 16,17 16,31 3,24" fill={c[0]} />
+      <polygon points="29,10 16,17 16,31 29,24" fill={c[1]} />
+      <path d="M 7.3 7.7 L 20.3 14.7 M 11.7 5.3 L 24.7 12.3 M 7.3 12.3 L 20.3 5.3 M 11.7 14.7 L 24.7 7.7" stroke="#0f172a" strokeWidth="0.8" />
+      <path d="M 3 14.7 L 16 21.7 M 3 19.3 L 16 26.3 M 7.3 12.3 L 7.3 26.3 M 11.7 14.7 L 11.7 28.7" stroke="#0f172a" strokeWidth="0.8" />
+      <path d="M 29 14.7 L 16 21.7 M 29 19.3 L 16 26.3 M 24.7 12.3 L 24.7 26.3 M 20.3 14.7 L 20.3 28.7" stroke="#0f172a" strokeWidth="0.8" />
+    </g>
+  )
+};
+
+const WallFrame = ({ item }) => {
+  const f = item.c;
+  return (
+    <div
+      className="border-4 px-3 py-2 rounded-xl shadow-lg font-serif font-black text-xs whitespace-nowrap"
+      style={{
+        background: f.bg,
+        borderColor: f.border,
+        color: f.color,
+        transform: `rotate(${f.rotate}deg)`,
+        boxShadow: f.glow ? `0 0 14px ${f.border}` : undefined
+      }}
+    >
+      {f.text}
+    </div>
+  );
+};
+
+const CeilingDecor = ({ item }) => {
+  if (item.kind === 'lights') {
+    return (
+      <div className="flex justify-around items-center px-4">
+        {item.c.map((col, i) => (
+          <span
+            key={i}
+            className={`w-3 h-3 rounded-full ${i % 2 === 0 ? 'animate-ping' : 'animate-pulse'}`}
+            style={{ background: col, boxShadow: `0 0 8px ${col}` }}
+          />
+        ))}
+      </div>
+    );
+  }
+  const flags = 12;
+  return (
+    <svg viewBox="0 0 300 30" preserveAspectRatio="none" className="w-full h-7">
+      <path d="M 0 3 Q 150 14 300 3" stroke="#78350f" strokeWidth="1.2" fill="none" />
+      {Array.from({ length: flags }, (_, i) => {
+        const t = (i + 0.5) / flags;
+        const x = t * 300;
+        const y = 3 + 4 * (1 - (2 * t - 1) * (2 * t - 1)) * 2.75;
+        if (item.kind === 'starGarland') {
+          return <polygon key={i} points={starPoints(x, y + 6, 6, 2.6)} fill={item.c[0]} className={i % 2 ? 'animate-pulse' : ''} />;
+        }
+        return <polygon key={i} points={`${x - 9},${y} ${x + 9},${y} ${x},${y + 16}`} fill={item.c[i % item.c.length]} />;
+      })}
+    </svg>
+  );
+};
+
+function PetRoom({ petData, equippedOverride = null, wallpaperOverride = null, dyeOverride = null }) {
+  const equipped = equippedOverride || petData.equipped;
+  const wallpaper = ITEM_BY_ID[wallpaperOverride || petData.wallpaper] || ITEM_BY_ID['wp_cozy'];
+  const dye = dyeOverride || petData.dye || 'dye_default';
+  const bySlot = getEquippedBySlot(equipped);
+
+  const svgFor = (renderers, slot, viewBox) => {
+    const item = bySlot[slot];
+    if (!item || !renderers[item.kind]) return null;
+    return <svg viewBox={viewBox} className="w-full h-full overflow-visible">{renderers[item.kind](item.c)}</svg>;
+  };
+
+  return (
+    <div
+      className="relative w-full h-[380px] rounded-3xl overflow-hidden border-4 shadow-xl"
+      style={{ background: wallpaper.bg, borderColor: wallpaper.border }}
+    >
+      {/* Wallpaper Pattern & Atmosphere Effects */}
+      {wallpaper.pattern && <div className="absolute inset-0 pointer-events-none" style={WALL_PATTERNS[wallpaper.pattern]} />}
+      {wallpaper.glow === 'space' && (
+        <div className="absolute inset-0 opacity-40 pointer-events-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-300 via-purple-500 to-transparent" />
+      )}
+      {wallpaper.glow === 'disco' && (
+        <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cyan-400 via-fuchsia-500 to-transparent animate-pulse" />
+      )}
+
+      {/* Floor */}
+      <div
+        className="absolute bottom-0 inset-x-0 h-24 border-t-2 border-black/10"
+        style={{ background: wallpaper.floor || 'rgba(69,26,3,0.2)' }}
+      />
+
+      {/* Ceiling Decorations */}
+      {bySlot.wall_top && (
+        <div className="absolute top-1 left-0 right-0 z-10">
+          <CeilingDecor item={bySlot.wall_top} />
+        </div>
+      )}
+
+      {/* Framed Wall Art */}
+      {bySlot.wall && (
+        <div className="absolute top-5 left-4 z-10">
+          <WallFrame item={bySlot.wall} />
+        </div>
+      )}
+
+      {/* Room Title Badge */}
+      <div className="absolute top-4 right-4 z-20 bg-black/40 backdrop-blur-md text-white font-black text-xs px-3 py-1 rounded-full border border-white/20">
+        {petData.name}'s Room
+      </div>
+
+      {/* Wall Decor (right) */}
+      {bySlot.wall_right && (
+        <div className="absolute top-14 right-6 z-10 w-16 h-16">
+          {svgFor(WALL_RIGHT_RENDERERS, 'wall_right', '0 0 64 64')}
+        </div>
+      )}
+
+      {/* Rug (directly underneath pet) */}
+      {bySlot.rug && (
+        <div className="absolute bottom-[38px] left-1/2 -translate-x-1/2 w-56 h-16 z-10">
+          {svgFor(RUG_RENDERERS, 'rug', '0 0 220 64')}
+        </div>
+      )}
+
+      {/* Corner Furniture */}
+      {bySlot.furniture_left && (
+        <div className="absolute bottom-6 left-3 w-16 h-24 z-20">
+          {svgFor(LEFT_RENDERERS, 'furniture_left', '0 0 60 96')}
+        </div>
+      )}
+      {bySlot.furniture_right && (
+        <div className="absolute bottom-6 right-3 w-20 h-24 z-20">
+          {svgFor(RIGHT_RENDERERS, 'furniture_right', '0 0 80 96')}
+        </div>
+      )}
+
+      {/* Pet Avatar */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30">
+        <PetAvatar species={petData.species} equipped={equipped} dye={dye} className="w-48 h-48" />
+      </div>
+
+      {/* Toy (resting beside the pet) */}
+      {bySlot.floor_extra && (
+        <div className="absolute bottom-10 z-40 w-8 h-8" style={{ left: 'calc(50% - 82px)' }}>
+          {svgFor(TOY_RENDERERS, 'floor_extra', '0 0 32 32')}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Small colour preview shown on shop cards
+const ItemSwatch = ({ item }) => {
+  if (item.category === 'wallpaper') {
+    return <div className="w-8 h-8 rounded-lg border-2 shrink-0" style={{ background: item.bg, borderColor: item.border }} />;
+  }
+  if (item.category === 'dye') {
+    const [a, b] = item.c || ['#cbd5e1', '#f8fafc'];
+    const fill = a.startsWith('url') ? (item.id === 'dye_rainbow' ? 'linear-gradient(135deg,#f43f5e,#f59e0b,#22c55e,#3b82f6,#a855f7)' : 'linear-gradient(135deg,#fde047,#f59e0b,#b45309)') : a;
+    return (
+      <div className="w-8 h-8 rounded-full border-2 border-slate-200 shrink-0 relative overflow-hidden" style={{ background: fill }}>
+        <div className="absolute bottom-0 right-0 w-4 h-4 rounded-tl-full" style={{ background: b }} />
+      </div>
+    );
+  }
+  return null;
+};
+
+function App() { 
+
+  const [authSession, setAuthSession] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+  const [authMode, setAuthMode] = useState('signin');
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authMessage, setAuthMessage] = useState('');
+  const [authBusy, setAuthBusy] = useState(false);
+  const [signOutBusy, setSignOutBusy] = useState(false);
+  const [cloudReadyUser, setCloudReadyUser] = useState(null);
+  const [cloudLoadError, setCloudLoadError] = useState('');
+  const [cloudSaveError, setCloudSaveError] = useState('');
+  const [cloudLoadAttempt, setCloudLoadAttempt] = useState(0);
+  const [cloudStatus, setCloudStatus] = useState('');
+
+  const [studentName, setStudentName] = useState(() => { 
+
+    return localStorage.getItem('maths_revision_student_name') || 'Year 11 Student'; 
+
+  }); 
+
+  const [isEditingName, setIsEditingName] = useState(false); 
+
+ 
+
+  // Map of topicId -> { status: 'green'|'orange'|'red'|'unassessed', score: number, notes: string, lastTested: string } 
+
+  const [progress, setProgress] = useState(() => { 
+
+    const saved = localStorage.getItem('maths_revision_progress'); 
+
+    return saved ? JSON.parse(saved) : {}; 
+
+  }); 
+
+ 
+
+  // Pet Companion, Inventory & Equipped Items State 
+
+  const [petData, setPetData] = useState(() => {
+    const saved = localStorage.getItem('maths_revision_pet');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      let savedProgress = {};
+      try {
+        savedProgress = JSON.parse(localStorage.getItem('maths_revision_progress') || '{}');
+      } catch (e) {}
+      // Ensure persistent inventory array exists, keep one item per slot, and give XP for earlier revision
+      return {
+        ...parsed,
+        inventory: parsed.inventory || parsed.equipped || [...STARTER_INVENTORY],
+        equipped: (parsed.equipped || STARTER_EQUIPPED).reduce((list, id) => equipInSlot(list, id), []),
+        wallpaper: parsed.wallpaper || 'wp_cozy',
+        dye: parsed.dye || 'dye_default',
+        xp: typeof parsed.xp === 'number' ? parsed.xp : estimateXpFromProgress(savedProgress)
+      };
+    }
+    return {
+      name: 'Pi',
+      species: 'cat',
+      dye: 'dye_default',
+      wallpaper: 'wp_cozy',
+      inventory: [...STARTER_INVENTORY],
+      equipped: [...STARTER_EQUIPPED],
+      coins: 150,
+      xp: 0
+    };
+  });
+
+  const [hasOnboarded, setHasOnboarded] = useState(() => { 
+
+    return localStorage.getItem('maths_revision_onboarded') === 'true'; 
+
+  }); 
+
+ 
+
+  // Navigation tab state: 'revise' | 'pet' | 'shop' 
+
+  const [activeTab, setActiveTab] = useState('revise'); 
+
+ 
+
+  // Shop Category Filter & Live Item Fitting Room Preview 
+
+  const [shopCategory, setShopCategory] = useState('all'); 
+
+  const [previewItem, setPreviewItem] = useState(null); 
+
+ 
+
+  // Coin Toast Notification 
+
+  const [toast, setToast] = useState({ show: false, text: '', coins: 0, xp: 0 });
+  const toastTimer = useRef(null);
+
+  // Level-up celebration popup
+  const [levelUp, setLevelUp] = useState(null);
+
+  // Shop option to hide items that are still locked
+  const [hideLocked, setHideLocked] = useState(false); 
+
+ 
+
+  // Onboarding draft state 
+
+  const [draftStudentName, setDraftStudentName] = useState(studentName); 
+
+  const [draftPetName, setDraftPetName] = useState(petData.name); 
+
+  const [draftSpecies, setDraftSpecies] = useState(petData.species); 
+
+ 
+
+  // UI Revision filtering state 
+
+  const [selectedStrand, setSelectedStrand] = useState('All'); 
+
+  const [selectedStatus, setSelectedStatus] = useState('All'); 
+
+  const [searchQuery, setSearchQuery] = useState(''); 
+
+  const [showGuide, setShowGuide] = useState(true); 
+
+   
+
+  // Modal state for testing a topic 
+
+  const [activeModalTopic, setActiveModalTopic] = useState(null); 
+
+  const [modalScore, setModalScore] = useState(null); 
+
+  const [modalNotes, setModalNotes] = useState(''); 
+
+  const [copiedClip, setCopiedClip] = useState(false); 
+
+ 
+
+  useEffect(() => { 
+
+    localStorage.setItem('maths_revision_progress', JSON.stringify(progress)); 
+
+  }, [progress]); 
+
+ 
+
+  useEffect(() => { 
+
+    localStorage.setItem('maths_revision_student_name', studentName); 
+
+  }, [studentName]); 
+
+ 
+
+  useEffect(() => { 
+
+    localStorage.setItem('maths_revision_pet', JSON.stringify(petData)); 
+
+  }, [petData]); 
+
+ 
+
+  useEffect(() => { 
+
+    localStorage.setItem('maths_revision_onboarded', hasOnboarded ? 'true' : 'false'); 
+
+  }, [hasOnboarded]); 
+
+ 
+
+  useEffect(() => {
+    let active = true;
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+      if (active) setAuthSession(session);
+    });
+
+    supabaseClient.auth.getSession().then(({ data, error }) => {
+      if (!active) return;
+      if (error) setAuthMessage(error.message);
+      setAuthSession(data?.session || null);
+      setAuthReady(true);
+    }).catch(error => {
+      if (!active) return;
+      setAuthMessage(error.message || 'Could not connect to sign-in. Please try again.');
+      setAuthReady(true);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const userId = authSession?.user?.id;
+
+  useEffect(() => {
+    if (!userId) {
+      setCloudReadyUser(null);
+      setCloudStatus('');
+      return;
+    }
+
+    let cancelled = false;
+    setCloudReadyUser(null);
+    setCloudLoadError('');
+    setCloudStatus('Loading saved progress...');
+
+    const loadCloudData = async () => {
+      const { data, error } = await supabaseClient
+        .from('student_data')
+        .select('student_name, progress, pet_data')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (cancelled) return;
+      if (error) {
+        setCloudLoadError(error.message);
+        return;
+      }
+
+      if (data) {
+        const savedPetData = data.pet_data || {};
+        const { hasOnboarded: savedOnboarded, ...savedPet } = savedPetData;
+        const savedStudentName = data.student_name || 'Year 11 Student';
+
+        setStudentName(savedStudentName);
+        setProgress(data.progress || {});
+        setHasOnboarded(savedOnboarded === true);
+        setDraftStudentName(savedStudentName);
+        setDraftPetName(savedPet.name || 'Pi');
+        setDraftSpecies(savedPet.species || 'cat');
+        setPetData(previous => ({
+          ...previous,
+          ...savedPet,
+          inventory: savedPet.inventory || previous.inventory,
+          equipped: (savedPet.equipped || previous.equipped || STARTER_EQUIPPED)
+            .reduce((items, itemId) => equipInSlot(items, itemId), [])
+        }));
+      }
+
+      setCloudReadyUser(userId);
+      setCloudStatus(data ? 'Saved to cloud' : 'Saving to cloud...');
+    };
+
+    loadCloudData().catch(error => {
+      if (!cancelled) setCloudLoadError(error.message || 'Could not load your saved progress.');
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, cloudLoadAttempt]);
+
+  useEffect(() => {
+    if (!userId || cloudReadyUser !== userId) return;
+
+    const saveTimeout = setTimeout(async () => {
+      setCloudStatus('Saving...');
+      setCloudSaveError('');
+      const { error } = await supabaseClient.from('student_data').upsert({
+        user_id: userId,
+        student_name: studentName,
+        progress,
+        pet_data: { ...petData, hasOnboarded },
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+
+      if (error) {
+        setCloudSaveError(error.message);
+        setCloudStatus('Cloud save failed');
+      } else {
+        setCloudStatus('Saved to cloud');
+      }
+    }, 700);
+
+    return () => clearTimeout(saveTimeout);
+  }, [userId, cloudReadyUser, studentName, progress, petData, hasOnboarded]);
+
+  const handleAuthSubmit = async (event) => {
+    event.preventDefault();
+    setAuthBusy(true);
+    setAuthMessage('');
+
+    try {
+      if (authMode === 'signup') {
+        const { data, error } = await supabaseClient.auth.signUp({
+          email: authEmail.trim(),
+          password: authPassword,
+          options: { emailRedirectTo: window.location.origin }
+        });
+        if (error) throw error;
+        if (!data.session) {
+          setAuthMessage('Account created. Check your email for the confirmation link, then return here to sign in.');
+        } else {
+          setAuthSession(data.session);
+        }
+      } else {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: authEmail.trim(),
+          password: authPassword
+        });
+        if (error) throw error;
+        setAuthSession(data.session);
+      }
+      setAuthPassword('');
+    } catch (error) {
+      setAuthMessage(error.message || 'Sign-in failed. Please try again.');
+    } finally {
+      setAuthBusy(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    setSignOutBusy(true);
+    setCloudStatus('Saving...');
+
+    const { error: saveError } = await supabaseClient.from('student_data').upsert({
+      user_id: userId,
+      student_name: studentName,
+      progress,
+      pet_data: { ...petData, hasOnboarded },
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' });
+
+    if (saveError) {
+      setCloudSaveError(saveError.message);
+      setCloudStatus('Save failed; still signed in');
+      setSignOutBusy(false);
+      return;
+    }
+
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+      setCloudStatus('Sign out failed');
+      setSignOutBusy(false);
+      return;
+    }
+
+    ['maths_revision_progress', 'maths_revision_student_name', 'maths_revision_pet', 'maths_revision_onboarded']
+      .forEach(key => localStorage.removeItem(key));
+    window.location.reload();
+  };
+
+  const levelInfo = getLevelInfo(petData.xp || 0);
+
+  const showRewardToast = (text, coinsEarned, xpEarned) => {
+    setToast({ show: true, text, coins: coinsEarned, xp: xpEarned });
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => {
+      setToast({ show: false, text: '', coins: 0, xp: 0 });
+    }, 3000);
+  };
+
+  // Award coins and XP together, celebrating any level-ups along the way
+  const addRewards = (coins, xp, reason) => {
+    if (coins <= 0 && xp <= 0) return;
+    const oldLevel = getLevelInfo(petData.xp || 0).level;
+    const newLevel = getLevelInfo((petData.xp || 0) + xp).level;
+    const bonus = (newLevel - oldLevel) * LEVEL_UP_BONUS_COINS;
+    setPetData(prev => ({ ...prev, coins: prev.coins + coins + bonus, xp: (prev.xp || 0) + xp }));
+    showRewardToast(reason, coins, xp);
+    if (newLevel > oldLevel) {
+      setLevelUp({
+        level: newLevel,
+        bonus,
+        unlocked: SHOP_ITEMS.filter(item => item.level > oldLevel && item.level <= newLevel)
+      });
+    }
+  };
+
+  const totalTopics = ALL_TOPICS.length; 
+
+  let greenCount = 0; 
+
+  let orangeCount = 0; 
+
+  let redCount = 0; 
+
+  let unassessedCount = 0; 
+
+ 
+
+  ALL_TOPICS.forEach(topic => { 
+
+    const status = progress[topic.id]?.status || 'unassessed'; 
+
+    if (status === 'green') greenCount++; 
+
+    else if (status === 'orange') orangeCount++; 
+
+    else if (status === 'red') redCount++; 
+
+    else unassessedCount++; 
+
+  }); 
+
+ 
+
+  const greenPct = Math.round((greenCount / totalTopics) * 100); 
+
+  const orangePct = Math.round((orangeCount / totalTopics) * 100); 
+
+  const redPct = Math.round((redCount / totalTopics) * 100); 
+
+  const assessedCount = greenCount + orangeCount + redCount; 
+
+ 
+
+  const finishOnboarding = () => { 
+
+    if (!draftStudentName.trim() || !draftPetName.trim()) { 
+
+      alert('Please enter both your name and a name for your pet!'); 
+
+      return; 
+
+    } 
+
+    setStudentName(draftStudentName.trim()); 
+
+    setPetData(prev => ({ 
+
+      ...prev, 
+
+      name: draftPetName.trim(), 
+
+      species: draftSpecies 
+
+    })); 
+
+    setHasOnboarded(true); 
+
+  }; 
+
+ 
+
+  const openDiagnosticModal = (topic) => { 
+
+    const currentProg = progress[topic.id] || {}; 
+
+    setActiveModalTopic(topic); 
+
+    setModalScore(currentProg.score !== undefined ? currentProg.score : null); 
+
+    setModalNotes(currentProg.notes || ''); 
+
+    setCopiedClip(false); 
+
+  }; 
+
+ 
+
+  const closeModal = () => { 
+
+    setActiveModalTopic(null); 
+
+    setModalScore(null); 
+
+    setModalNotes(''); 
+
+  }; 
+
+ 
+
+  const copyClipNumber = (clip) => { 
+
+    navigator.clipboard.writeText(clip); 
+
+    setCopiedClip(true); 
+
+    setTimeout(() => setCopiedClip(false), 2000); 
+
+  }; 
+
+ 
+
+  const saveTopicAssessment = (forcedStatus = null) => { 
+
+    if (!activeModalTopic) return; 
+
+ 
+
+    const oldProg = progress[activeModalTopic.id] || {}; 
+
+    const oldStatus = oldProg.status || 'unassessed'; 
+
+ 
+
+    let finalStatus = 'unassessed'; 
+
+    let finalScore = modalScore; 
+
+ 
+
+    if (forcedStatus) { 
+
+      finalStatus = forcedStatus; 
+
+      if (forcedStatus === 'green') finalScore = 5; 
+
+      else if (forcedStatus === 'orange') finalScore = 3; 
+
+      else if (forcedStatus === 'red') finalScore = 1; 
+
+    } else if (modalScore !== null) { 
+
+      if (modalScore === 5) finalStatus = 'green'; 
+
+      else if (modalScore >= 3) finalStatus = 'orange'; 
+
+      else finalStatus = 'red'; 
+
+    } else { 
+
+      alert('Please select a score from 0 to 5, or tap one of the traffic light buttons.'); 
+
+      return; 
+
+    } 
+
+ 
+
+    let coinReward = 0;
+    let xpReward = 0;
+    let rewardReason = '';
+    const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+    if (oldStatus === 'unassessed' && finalStatus !== 'unassessed') {
+      coinReward = 50;
+      xpReward = XP_REWARDS.firstAssessment;
+      rewardReason = 'Assessed topic for the first time!';
+    } else if (oldStatus === 'red' && finalStatus === 'orange') {
+      coinReward = 50;
+      xpReward = XP_REWARDS.redToOrange;
+      rewardReason = 'Upgraded Red topic to Orange!';
+    } else if (oldStatus === 'red' && finalStatus === 'green') {
+      coinReward = 100;
+      xpReward = XP_REWARDS.redToGreen;
+      rewardReason = 'Upgraded Red topic directly to Green!';
+    } else if (oldStatus === 'orange' && finalStatus === 'green') {
+      coinReward = 50;
+      xpReward = XP_REWARDS.orangeToGreen;
+      rewardReason = 'Mastered topic (Orange ➡️ Green)!';
+    } else if (oldProg.lastTested !== today) {
+      // Spaced-repetition re-test (XP only, once per topic per day)
+      xpReward = XP_REWARDS.retest;
+      rewardReason = 'Re-tested a topic to keep it fresh!';
+    }
+
+    if (modalNotes.trim() && !oldProg.notes) {
+      coinReward += 10;
+      xpReward += XP_REWARDS.notes;
+      rewardReason += ' (+10 for adding notes)';
+    }
+
+    addRewards(coinReward, xpReward, rewardReason.trim());
+
+    setProgress(prev => ({ 
+
+      ...prev, 
+
+      [activeModalTopic.id]: { 
+
+        status: finalStatus, 
+
+        score: finalScore, 
+
+        notes: modalNotes, 
+
+        lastTested: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) 
+
+      } 
+
+    })); 
+
+ 
+
+    closeModal(); 
+
+  }; 
+
+ 
+
+  /* Persistent Inventory & Equip Toggling Logic */
+  const toggleEquipItem = (itemId) => {
+    const item = ITEM_BY_ID[itemId];
+    if (!item) return;
+
+    setPetData(prev => {
+      // If equipping a wallpaper or dye, swap it specifically
+      if (item.category === 'wallpaper') {
+        const isEquipped = prev.wallpaper === itemId;
+        return { ...prev, wallpaper: isEquipped ? 'wp_cozy' : itemId };
+      }
+      if (item.category === 'dye') {
+        const isEquipped = prev.dye === itemId;
+        return { ...prev, dye: isEquipped ? 'dye_default' : itemId };
+      }
+
+      // Wearables & furniture: one item per slot, so equipping swaps out the old one
+      const isEquipped = prev.equipped.includes(itemId);
+      const newEquipped = isEquipped
+        ? prev.equipped.filter(id => id !== itemId)
+        : equipInSlot(prev.equipped, itemId);
+      return { ...prev, equipped: newEquipped };
+    });
+  };
+
+  const buyItem = (item) => {
+    if (!isItemUnlocked(item, levelInfo.level)) {
+      alert(`This item unlocks at Level ${item.level}. Keep revising to earn XP!`);
+      return;
+    }
+    if (petData.coins < item.price) {
+      alert('Not enough coins! Complete GCSE revision diagnostics to earn more.');
+      return;
+    }
+
+    const isRoomItem = item.category !== 'wallpaper' && item.category !== 'dye';
+    setPetData(prev => ({
+      ...prev,
+      coins: prev.coins - item.price,
+      inventory: [...(prev.inventory || []), item.id],
+      equipped: isRoomItem ? equipInSlot(prev.equipped, item.id) : prev.equipped,
+      wallpaper: item.category === 'wallpaper' ? item.id : prev.wallpaper,
+      dye: item.category === 'dye' ? item.id : prev.dye
+    }));
+  };
+
+  const filteredTopics = ALL_TOPICS.filter(topic => { 
+
+    const topicProg = progress[topic.id] || {}; 
+
+    const status = topicProg.status || 'unassessed'; 
+
+ 
+
+    const matchesStrand = selectedStrand === 'All' || topic.strand === selectedStrand; 
+
+    const matchesStatus = selectedStatus === 'All' || status === selectedStatus; 
+
+    const matchesSearch = topic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||  
+
+                          topic.clip.toLowerCase().includes(searchQuery.toLowerCase()) || 
+
+                          topic.strand.toLowerCase().includes(searchQuery.toLowerCase()); 
+
+ 
+
+    return matchesStrand && matchesStatus && matchesSearch; 
+
+  }); 
+
+ 
+
+  const ownedIds = petData.inventory || [];
+
+  const shopFilteredItems = SHOP_ITEMS
+    .filter(item => shopCategory === 'all' || item.category === shopCategory)
+    .filter(item => !hideLocked || isItemUnlocked(item, levelInfo.level) || ownedIds.includes(item.id))
+    .sort((a, b) => a.level - b.level);
+
+  /* Calculate equipped list, wallpaper & fur coat for the shop preview */
+  const isPreviewingRoomItem = previewItem && previewItem.category !== 'wallpaper' && previewItem.category !== 'dye';
+  const previewEquippedList = isPreviewingRoomItem
+    ? equipInSlot(petData.equipped, previewItem.id)
+    : petData.equipped;
+  const previewWallpaper = previewItem?.category === 'wallpaper' ? previewItem.id : petData.wallpaper;
+  const previewDye = previewItem?.category === 'dye' ? previewItem.id : petData.dye;
+
+  const unlockedCount = SHOP_ITEMS.filter(item => isItemUnlocked(item, levelInfo.level)).length;
+  const nextUnlocks = levelInfo.isMax ? [] : SHOP_ITEMS.filter(item => item.level === levelInfo.level + 1);
+
+  if (!authReady) {
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6 text-slate-700 font-bold">
+        Connecting to your account...
+      </div>
+    );
+  }
+
+  if (authSession && cloudLoadError) {
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
+        <div className="bg-white max-w-md w-full p-8 rounded-3xl shadow-lg border border-slate-200 space-y-4">
+          <h1 className="text-xl font-black text-slate-900">Could not load saved progress</h1>
+          <p className="text-sm text-slate-600">{cloudLoadError}</p>
+          <button
+            onClick={() => setCloudLoadAttempt(attempt => attempt + 1)}
+            className="w-full py-3 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (authSession && cloudReadyUser !== userId) {
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6 text-slate-700 font-bold">
+        Loading your saved progress...
+      </div>
+    );
+  }
+
+  if (!authSession) {
+    return (
+      <div className="min-h-screen bg-slate-100 text-slate-800 flex items-center justify-center p-4">
+        <div className="bg-white w-full max-w-md p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-200 space-y-6">
+          <div className="text-center space-y-3">
+            <div className="bg-amber-100 p-3 rounded-2xl w-14 h-14 mx-auto flex items-center justify-center text-amber-700">
+              <Target className="w-7 h-7" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black text-slate-900">GCSE Maths Revision</h1>
+              <p className="text-sm text-slate-500 mt-1">Sign in to keep your progress saved to your account.</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleAuthSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="account-email" className="block text-xs font-black uppercase text-slate-500 mb-1">Email</label>
+              <input
+                id="account-email"
+                type="email"
+                autoComplete="email"
+                required
+                value={authEmail}
+                onChange={event => setAuthEmail(event.target.value)}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-amber-500"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div>
+              <label htmlFor="account-password" className="block text-xs font-black uppercase text-slate-500 mb-1">Password</label>
+              <input
+                id="account-password"
+                type="password"
+                autoComplete={authMode === 'signup' ? 'new-password' : 'current-password'}
+                minLength="6"
+                required
+                value={authPassword}
+                onChange={event => setAuthPassword(event.target.value)}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-amber-500"
+                placeholder="At least 6 characters"
+              />
+            </div>
+
+            {authMessage && (
+              <p role="status" className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-xl p-3">
+                {authMessage}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={authBusy}
+              className="w-full py-3 rounded-xl bg-slate-900 text-white font-black text-sm hover:bg-slate-800 disabled:opacity-60"
+            >
+              {authBusy ? 'Please wait...' : authMode === 'signup' ? 'Create account' : 'Sign in'}
+            </button>
+          </form>
+
+          <p className="text-center text-sm text-slate-600">
+            {authMode === 'signup' ? 'Already have an account?' : 'New here?'}{' '}
+            <button
+              type="button"
+              onClick={() => {
+                setAuthMode(authMode === 'signup' ? 'signin' : 'signup');
+                setAuthMessage('');
+              }}
+              className="font-bold text-amber-700 hover:text-amber-800 underline"
+            >
+              {authMode === 'signup' ? 'Sign in' : 'Create an account'}
+            </button>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return ( 
+
+    <div className="min-h-screen bg-slate-100 text-slate-800 flex flex-col font-sans selection:bg-amber-200"> 
+
+       
+
+      {/* Reward Toast Notification */}
+      {toast.show && (
+        <div className="fixed top-20 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border-2 border-amber-400 flex items-center space-x-3 animate-bounce">
+          <Coins className="w-6 h-6 text-amber-400" />
+          <div>
+            <div className="font-black text-sm space-x-2">
+              {toast.coins > 0 && <span className="text-amber-400">+{toast.coins} Coins</span>}
+              {toast.xp > 0 && <span className="text-sky-300">+{toast.xp} XP</span>}
+            </div>
+            <div className="text-xs text-slate-300 font-medium">{toast.text}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Level Up Celebration */}
+      {levelUp && (
+        <div className="fixed inset-0 z-[60] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setLevelUp(null)}>
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-4 border-amber-400 text-center space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center shadow-lg">
+              <span className="text-3xl font-black text-white drop-shadow">{levelUp.level}</span>
+            </div>
+            <div>
+              <h2 className="text-2xl font-black text-slate-900">Level {levelUp.level} reached!</h2>
+              <p className="text-xs text-slate-500 font-medium mt-1">
+                {petData.name} is so proud of you. Here’s a bonus of <strong className="text-amber-600">{levelUp.bonus} coins</strong>!
+              </p>
+            </div>
+            {levelUp.unlocked.length > 0 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 text-left space-y-2">
+                <div className="text-xs font-black text-amber-900 flex items-center space-x-1.5">
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <span>{levelUp.unlocked.length} new items unlocked</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {levelUp.unlocked.map(item => (
+                    <span key={item.id} className="text-[11px] font-bold bg-white border border-amber-200 text-slate-700 px-2 py-0.5 rounded-lg">
+                      {item.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setLevelUp(null)}
+                className="py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs transition"
+              >
+                Keep Revising
+              </button>
+              <button
+                onClick={() => { setLevelUp(null); setShopCategory('all'); setActiveTab('shop'); }}
+                className="py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition"
+              >
+                Visit the Shop
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Onboarding Modal */} 
+
+      {!hasOnboarded && ( 
+
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4"> 
+
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6"> 
+
+            <div className="text-center space-y-2"> 
+
+              <div className="bg-amber-100 p-3 rounded-2xl w-12 h-12 mx-auto flex items-center justify-center text-amber-600 font-black"> 
+
+                <Target className="w-7 h-7" /> 
+
+              </div> 
+
+              <h2 className="text-2xl font-black text-slate-900">Welcome to GCSE Maths Revision!</h2> 
+
+              <p className="text-xs text-slate-500">Set up your profile and choose your study pet companion.</p> 
+
+            </div> 
+
+ 
+
+            <div className="space-y-4"> 
+
+              <div> 
+
+                <label className="block text-xs font-black uppercase text-slate-500 mb-1">Your Name</label> 
+
+                <input  
+
+                  type="text"  
+
+                  value={draftStudentName}  
+
+                  onChange={(e) => setDraftStudentName(e.target.value)} 
+
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 focus:outline-none focus:border-amber-500" 
+
+                  placeholder="e.g. Alex" 
+
+                /> 
+
+              </div> 
+
+ 
+
+              <div> 
+
+                <label className="block text-xs font-black uppercase text-slate-500 mb-1">Choose Companion Animal</label> 
+
+                <div className="grid grid-cols-3 gap-2"> 
+
+                  {PET_SPECIES.map((spec) => ( 
+
+                    <button 
+
+                      key={spec.id} 
+
+                      onClick={() => setDraftSpecies(spec.id)} 
+
+                      className={`p-3 rounded-2xl border-2 text-center text-xs font-bold transition flex flex-col items-center space-y-1 ${ 
+
+                        draftSpecies === spec.id  
+
+                          ? 'border-amber-500 bg-amber-50 text-amber-950 ring-2 ring-amber-400'  
+
+                          : 'border-slate-200 hover:bg-slate-50 text-slate-700' 
+
+                      }`} 
+
+                    > 
+
+                      <PetAvatar species={spec.id} className="w-12 h-12" /> 
+
+                      <span>{spec.name}</span> 
+
+                    </button> 
+
+                  ))} 
+
+                </div> 
+
+              </div> 
+
+ 
+
+              <div> 
+
+                <label className="block text-xs font-black uppercase text-slate-500 mb-1">Name Your Pet</label> 
+
+                <input  
+
+                  type="text"  
+
+                  value={draftPetName}  
+
+                  onChange={(e) => setDraftPetName(e.target.value)} 
+
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 focus:outline-none focus:border-amber-500" 
+
+                  placeholder="e.g. Pi, Newton, Archimedes" 
+
+                /> 
+
+              </div> 
+
+            </div> 
+
+ 
+
+            <button 
+
+              onClick={finishOnboarding} 
+
+              className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-black text-sm rounded-2xl shadow-lg transition" 
+
+            > 
+
+              Start Revising & Meet Your Pet! 
+
+            </button> 
+
+          </div> 
+
+        </div> 
+
+      )} 
+
+ 
+
+      {/* Main Header */} 
+
+      <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md"> 
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3"> 
+
+           
+
+          <div className="flex items-center space-x-3"> 
+
+            <div className="bg-gradient-to-tr from-amber-500 to-amber-400 p-2 rounded-2xl text-slate-950 font-black shadow-lg"> 
+
+              <Target className="w-6 h-6" /> 
+
+            </div> 
+
+            <div> 
+
+              <h1 className="text-lg sm:text-xl font-black tracking-tight bg-gradient-to-r from-amber-400 via-amber-200 to-white bg-clip-text text-transparent"> 
+
+                So You Want To Revise Maths? 
+
+              </h1> 
+
+              <p className="text-[11px] text-slate-400 font-medium">Step-by-Step GCSE Higher Revision Companion</p> 
+
+            </div> 
+
+          </div> 
+
+ 
+
+          {/* Navigation Tabs & Student Profile */} 
+
+          <div className="flex items-center space-x-3"> 
+
+            <div className="flex items-center gap-2 text-[10px] font-bold">
+              <span className="hidden lg:inline text-slate-400 max-w-32 truncate" title={authSession.user.email}>
+                {authSession.user.email}
+              </span>
+              <span
+                className={`px-2 py-1 rounded-lg ${cloudSaveError ? 'bg-rose-500/20 text-rose-200' : 'bg-emerald-500/15 text-emerald-200'}`}
+                title={cloudSaveError || 'Your progress is saved to your account'}
+              >
+                {cloudStatus === 'Saved to cloud' ? 'Saved' : cloudStatus}
+              </span>
+              <button
+                onClick={handleSignOut}
+                disabled={signOutBusy}
+                className="px-2 py-1.5 rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 disabled:opacity-60"
+              >
+                {signOutBusy ? 'Saving...' : 'Sign out'}
+              </button>
+            </div>
+
+            <nav className="flex items-center bg-slate-950 p-1 rounded-2xl border border-slate-800">
+
+              <button 
+
+                onClick={() => setActiveTab('revise')} 
+
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${ 
+
+                  activeTab === 'revise' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white' 
+
+                }`} 
+
+              > 
+
+                <BookOpen className="w-3.5 h-3.5" /> 
+
+                <span>Revise</span> 
+
+              </button> 
+
+ 
+
+              <button 
+
+                onClick={() => setActiveTab('pet')} 
+
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${ 
+
+                  activeTab === 'pet' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white' 
+
+                }`} 
+
+              > 
+
+                <Home className="w-3.5 h-3.5" /> 
+
+                <span>My Pet</span> 
+
+              </button> 
+
+ 
+
+              <button 
+
+                onClick={() => setActiveTab('shop')} 
+
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${ 
+
+                  activeTab === 'shop' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white' 
+
+                }`} 
+
+              > 
+
+                <ShoppingBag className="w-3.5 h-3.5" /> 
+
+                <span>Shop</span> 
+
+              </button> 
+
+            </nav> 
+
+ 
+
+            <div
+              className="flex items-center space-x-2 bg-sky-500/10 border border-sky-500/30 px-3 py-1.5 rounded-2xl text-sky-200 text-xs font-black"
+              title={levelInfo.isMax ? 'Max level reached!' : `${levelInfo.intoLevel} / ${levelInfo.needed} XP to Level ${levelInfo.level + 1}`}
+            >
+              <Star className="w-4 h-4 text-sky-300" />
+              <span>Lv {levelInfo.level}</span>
+              <div className="hidden md:block w-14 h-1.5 rounded-full bg-slate-700 overflow-hidden">
+                <div className="h-full bg-sky-400" style={{ width: `${levelInfo.pct}%` }} />
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-1.5 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-2xl text-amber-300 text-xs font-black"> 
+
+              <Coins className="w-4 h-4 text-amber-400" /> 
+
+              <span>{petData.coins}</span> 
+
+            </div> 
+
+ 
+
+            <div className="hidden sm:flex items-center space-x-2 text-xs bg-slate-800 px-3 py-1.5 rounded-2xl border border-slate-700/60"> 
+
+              <User className="w-3.5 h-3.5 text-amber-400" /> 
+
+              {isEditingName ? ( 
+
+                <input  
+
+                  type="text"  
+
+                  value={studentName} 
+
+                  onChange={(e) => setStudentName(e.target.value)} 
+
+                  onBlur={() => setIsEditingName(false)} 
+
+                  onKeyDown={(e) => e.key === 'Enter' && setIsEditingName(false)} 
+
+                  autoFocus 
+
+                  className="bg-slate-950 text-white px-1.5 py-0.5 rounded border border-amber-500 text-xs font-bold focus:outline-none" 
+
+                /> 
+
+              ) : ( 
+
+                <span  
+
+                  onClick={() => setIsEditingName(true)} 
+
+                  className="font-bold text-slate-200 cursor-pointer hover:text-amber-300 transition" 
+
+                  title="Click to edit name" 
+
+                > 
+
+                  {studentName} 
+
+                </span> 
+
+              )} 
+
+            </div> 
+
+          </div> 
+
+ 
+
+        </div> 
+
+      </header> 
+
+ 
+
+      {/* Main Content Area */} 
+
+      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6 flex-1"> 
+
+         
+
+        {/* ================= TAB 1: REVISE DASHBOARD ================= */} 
+
+        {activeTab === 'revise' && ( 
+
+          <> 
+
+            <section className="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200/80"> 
+
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100"> 
+
+                <div className="flex items-center space-x-2"> 
+
+                  <Sparkles className="w-5 h-5 text-amber-500" /> 
+
+                  <h2 className="text-lg font-black text-slate-900 tracking-tight">The GCSE Maths Revision Algorithm</h2> 
+
+                </div> 
+
+                <button  
+
+                  onClick={() => setShowGuide(!showGuide)} 
+
+                  className="text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center space-x-1 bg-slate-100 px-3 py-1.5 rounded-xl transition" 
+
+                > 
+
+                  <span>{showGuide ? 'Hide Instructions' : 'Show Instructions'}</span> 
+
+                  {showGuide ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />} 
+
+                </button> 
+
+              </div> 
+
+ 
+
+              {showGuide && ( 
+
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4"> 
+
+                  <div className="bg-amber-50/60 border border-amber-200/80 rounded-2xl p-4 flex flex-col justify-between relative"> 
+
+                    <div className="space-y-2"> 
+
+                      <span className="inline-block bg-amber-500 text-white font-black text-xs px-2.5 py-0.5 rounded-lg">Step 1</span> 
+
+                      <h3 className="font-bold text-sm text-slate-900">Pick a Topic</h3> 
+
+                      <p className="text-xs text-slate-600 leading-relaxed"> 
+
+                        Select any topic from your revision list below that you haven't categorised or need to re-assess. 
+
+                      </p> 
+
+                    </div> 
+
+                    <div className="mt-3 text-right"> 
+
+                      <ArrowRight className="w-5 h-5 text-amber-500 inline-block" /> 
+
+                    </div> 
+
+                  </div> 
+
+ 
+
+                  <div className="bg-indigo-50/60 border border-indigo-200/80 rounded-2xl p-4 flex flex-col justify-between relative"> 
+
+                    <div className="space-y-2"> 
+
+                      <span className="inline-block bg-indigo-600 text-white font-black text-xs px-2.5 py-0.5 rounded-lg">Step 2</span> 
+
+                      <h3 className="font-bold text-sm text-slate-900">MathsWatch Diagnostic</h3> 
+
+                      <p className="text-xs text-slate-600 leading-relaxed"> 
+
+                        Open MathsWatch, search the clip number, and attempt <strong>3 standard</strong> + <strong>2 hard</strong> questions. 
+
+                      </p> 
+
+                    </div> 
+
+                    <div className="mt-3 text-right"> 
+
+                      <ArrowRight className="w-5 h-5 text-indigo-500 inline-block" /> 
+
+                    </div> 
+
+                  </div> 
+
+ 
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative"> 
+
+                    <div className="space-y-2"> 
+
+                      <span className="inline-block bg-slate-800 text-white font-black text-xs px-2.5 py-0.5 rounded-lg">Step 3</span> 
+
+                      <h3 className="font-bold text-sm text-slate-900">Categorise Score</h3> 
+
+                      <div className="space-y-1 text-xs"> 
+
+                        <div className="flex items-center space-x-1.5 font-bold text-emerald-700"> 
+
+                          <span className="w-2 h-2 rounded-full bg-emerald-500"></span> 
+
+                          <span>5/5 = Green (Mastered)</span> 
+
+                        </div> 
+
+                        <div className="flex items-center space-x-1.5 font-bold text-amber-700"> 
+
+                          <span className="w-2 h-2 rounded-full bg-amber-500"></span> 
+
+                          <span>3-4/5 = Orange (Targeted)</span> 
+
+                        </div> 
+
+                        <div className="flex items-center space-x-1.5 font-bold text-rose-700"> 
+
+                          <span className="w-2 h-2 rounded-full bg-rose-500"></span> 
+
+                          <span>0-2/5 = Red (Action Needed)</span> 
+
+                        </div> 
+
+                      </div> 
+
+                    </div> 
+
+                    <div className="mt-3 text-right"> 
+
+                      <ArrowRight className="w-5 h-5 text-slate-400 inline-block" /> 
+
+                    </div> 
+
+                  </div> 
+
+ 
+
+                  <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-4 flex flex-col justify-between relative"> 
+
+                    <div className="space-y-2"> 
+
+                      <span className="inline-block bg-emerald-600 text-white font-black text-xs px-2.5 py-0.5 rounded-lg">Step 4</span> 
+
+                      <h3 className="font-bold text-sm text-slate-900">Targeted Action & Re-test</h3> 
+
+                      <p className="text-xs text-slate-600 leading-relaxed"> 
+
+                        Watch clip videos for Reds/Oranges, take notes, do practice questions, and <strong>re-test to shift topics into Green!</strong> 
+
+                      </p> 
+
+                    </div> 
+
+                    <div className="mt-3 text-right"> 
+
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 inline-block" /> 
+
+                    </div> 
+
+                  </div> 
+
+                </div> 
+
+              )} 
+
+            </section> 
+
+ 
+
+            <section className="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200/80 space-y-4"> 
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"> 
+
+                <div> 
+
+                  <h2 className="text-lg font-black text-slate-900">Revision Dashboard</h2> 
+
+                  <p className="text-xs text-slate-500 font-medium">Tracking {totalTopics} GCSE Higher Topics across 5 Strands</p> 
+
+                </div> 
+
+                <div className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl self-start sm:self-auto"> 
+
+                  {assessedCount} of {totalTopics} Topics Assessed ({Math.round((assessedCount / totalTopics) * 100)}%) 
+
+                </div> 
+
+              </div> 
+
+ 
+
+              <div className="space-y-1.5"> 
+
+                <div className="w-full h-4 bg-slate-100 rounded-full overflow-hidden flex shadow-inner"> 
+
+                  <div style={{ width: `${greenPct}%` }} className="bg-emerald-500 transition-all duration-500" title={`Green: ${greenCount} (${greenPct}%)`}></div> 
+
+                  <div style={{ width: `${orangePct}%` }} className="bg-amber-400 transition-all duration-500" title={`Orange: ${orangeCount} (${orangePct}%)`}></div> 
+
+                  <div style={{ width: `${redPct}%` }} className="bg-rose-500 transition-all duration-500" title={`Red: ${redCount} (${redPct}%)`}></div> 
+
+                </div> 
+
+ 
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2"> 
+
+                  <button  
+
+                    onClick={() => setSelectedStatus('green')} 
+
+                    className={`p-3 rounded-2xl border text-left transition ${ 
+
+                      selectedStatus === 'green' ? 'ring-2 ring-emerald-500 bg-emerald-50/50' : 'bg-slate-50 hover:bg-slate-100 border-slate-200' 
+
+                    }`} 
+
+                  > 
+
+                    <div className="flex items-center space-x-2"> 
+
+                      <span className="w-3 h-3 rounded-full bg-emerald-500"></span> 
+
+                      <span className="text-xs font-bold text-slate-700">Green (Mastered)</span> 
+
+                    </div> 
+
+                    <div className="mt-1 flex items-baseline space-x-2"> 
+
+                      <span className="text-xl font-black text-slate-900">{greenCount}</span> 
+
+                      <span className="text-xs font-semibold text-emerald-600">{greenPct}%</span> 
+
+                    </div> 
+
+                  </button> 
+
+ 
+
+                  <button  
+
+                    onClick={() => setSelectedStatus('orange')} 
+
+                    className={`p-3 rounded-2xl border text-left transition ${ 
+
+                      selectedStatus === 'orange' ? 'ring-2 ring-amber-500 bg-amber-50/50' : 'bg-slate-50 hover:bg-slate-100 border-slate-200' 
+
+                    }`} 
+
+                  > 
+
+                    <div className="flex items-center space-x-2"> 
+
+                      <span className="w-3 h-3 rounded-full bg-amber-400"></span> 
+
+                      <span className="text-xs font-bold text-slate-700">Orange (Targeted)</span> 
+
+                    </div> 
+
+                    <div className="mt-1 flex items-baseline space-x-2"> 
+
+                      <span className="text-xl font-black text-slate-900">{orangeCount}</span> 
+
+                      <span className="text-xs font-semibold text-amber-600">{orangePct}%</span> 
+
+                    </div> 
+
+                  </button> 
+
+ 
+
+                  <button  
+
+                    onClick={() => setSelectedStatus('red')} 
+
+                    className={`p-3 rounded-2xl border text-left transition ${ 
+
+                      selectedStatus === 'red' ? 'ring-2 ring-rose-500 bg-rose-50/50' : 'bg-slate-50 hover:bg-slate-100 border-slate-200' 
+
+                    }`} 
+
+                  > 
+
+                    <div className="flex items-center space-x-2"> 
+
+                      <span className="w-3 h-3 rounded-full bg-rose-500"></span> 
+
+                      <span className="text-xs font-bold text-slate-700">Red (Action Needed)</span> 
+
+                    </div> 
+
+                    <div className="mt-1 flex items-baseline space-x-2"> 
+
+                      <span className="text-xl font-black text-slate-900">{redCount}</span> 
+
+                      <span className="text-xs font-semibold text-rose-600">{redPct}%</span> 
+
+                    </div> 
+
+                  </button> 
+
+ 
+
+                  <button  
+
+                    onClick={() => setSelectedStatus('unassessed')} 
+
+                    className={`p-3 rounded-2xl border text-left transition ${ 
+
+                      selectedStatus === 'unassessed' ? 'ring-2 ring-slate-400 bg-slate-200/50' : 'bg-slate-50 hover:bg-slate-100 border-slate-200' 
+
+                    }`} 
+
+                  > 
+
+                    <div className="flex items-center space-x-2"> 
+
+                      <span className="w-3 h-3 rounded-full bg-slate-300"></span> 
+
+                      <span className="text-xs font-bold text-slate-700">Unassessed</span> 
+
+                    </div> 
+
+                    <div className="mt-1 flex items-baseline space-x-2"> 
+
+                      <span className="text-xl font-black text-slate-900">{unassessedCount}</span> 
+
+                      <span className="text-xs font-semibold text-slate-500"> 
+
+                        {Math.round((unassessedCount / totalTopics) * 100)}% 
+
+                      </span> 
+
+                    </div> 
+
+                  </button> 
+
+                </div> 
+
+              </div> 
+
+            </section> 
+
+ 
+
+            <section className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-4"> 
+
+              <div className="flex items-center space-x-1.5 overflow-x-auto pb-2 scrollbar-none"> 
+
+                <button 
+
+                  onClick={() => setSelectedStrand('All')} 
+
+                  className={`px-4 py-2 rounded-2xl font-bold text-xs whitespace-nowrap transition ${ 
+
+                    selectedStrand === 'All'  
+
+                      ? 'bg-slate-900 text-white shadow-sm'  
+
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200' 
+
+                  }`} 
+
+                > 
+
+                  All Strands ({totalTopics}) 
+
+                </button> 
+
+                {CURRICULUM.map(strandObj => ( 
+
+                  <button 
+
+                    key={strandObj.strand} 
+
+                    onClick={() => setSelectedStrand(strandObj.strand)} 
+
+                    className={`px-4 py-2 rounded-2xl font-bold text-xs whitespace-nowrap transition flex items-center space-x-1.5 ${ 
+
+                      selectedStrand === strandObj.strand  
+
+                        ? 'bg-slate-900 text-white shadow-sm'  
+
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200' 
+
+                    }`} 
+
+                  > 
+
+                    <span>{strandObj.icon}</span> 
+
+                    <span>{strandObj.strand}</span> 
+
+                  </button> 
+
+                ))} 
+
+              </div> 
+
+ 
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-slate-100"> 
+
+                <div className="relative flex-1"> 
+
+                  <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" /> 
+
+                  <input 
+
+                    type="text" 
+
+                    placeholder="Search topic name or MathsWatch clip number (e.g., '134b', 'Surds')..." 
+
+                    value={searchQuery} 
+
+                    onChange={(e) => setSearchQuery(e.target.value)} 
+
+                    className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium focus:outline-none focus:border-amber-500 focus:bg-white transition" 
+
+                  /> 
+
+                </div> 
+
+ 
+
+                <div className="flex items-center space-x-2"> 
+
+                  <select 
+
+                    value={selectedStatus} 
+
+                    onChange={(e) => setSelectedStatus(e.target.value)} 
+
+                    className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 focus:outline-none focus:border-amber-500" 
+
+                  > 
+
+                    <option value="All">All Statuses</option> 
+
+                    <option value="green">🟢 Green (Mastered)</option> 
+
+                    <option value="orange">🟠 Orange (Targeted)</option> 
+
+                    <option value="red">🔴 Red (Action Needed)</option> 
+
+                    <option value="unassessed">⚪ Unassessed</option> 
+
+                  </select> 
+
+ 
+
+                  {(selectedStrand !== 'All' || selectedStatus !== 'All' || searchQuery !== '') && ( 
+
+                    <button 
+
+                      onClick={() => { 
+
+                        setSelectedStrand('All'); 
+
+                        setSelectedStatus('All'); 
+
+                        setSearchQuery(''); 
+
+                      }} 
+
+                      className="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-2xl text-xs font-bold transition" 
+
+                    > 
+
+                      Clear Filters 
+
+                    </button> 
+
+                  )} 
+
+                </div> 
+
+              </div> 
+
+            </section> 
+
+ 
+
+            <section className="space-y-3"> 
+
+              <div className="flex items-center justify-between text-xs font-bold text-slate-500 px-2"> 
+
+                <span>Showing {filteredTopics.length} Topics</span> 
+
+                <span>Click any topic to test or update status</span> 
+
+              </div> 
+
+ 
+
+              {filteredTopics.length === 0 ? ( 
+
+                <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 space-y-3"> 
+
+                  <HelpCircle className="w-10 h-10 text-slate-300 mx-auto" /> 
+
+                  <h3 className="font-bold text-slate-700 text-base">No matching topics found</h3> 
+
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto"> 
+
+                    Try adjusting your search query or status filter. 
+
+                  </p> 
+
+                </div> 
+
+              ) : ( 
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> 
+
+                  {filteredTopics.map(topic => { 
+
+                    const topicProg = progress[topic.id] || {}; 
+
+                    const status = topicProg.status || 'unassessed'; 
+
+                    const score = topicProg.score; 
+
+                    const notes = topicProg.notes; 
+
+ 
+
+                    return ( 
+
+                      <div 
+
+                        key={topic.id} 
+
+                        onClick={() => openDiagnosticModal(topic)} 
+
+                        className={`bg-white rounded-3xl p-5 border-2 text-left cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 flex flex-col justify-between relative space-y-4 ${ 
+
+                          status === 'green' 
+
+                            ? 'border-emerald-200 bg-emerald-50/20' 
+
+                            : status === 'orange' 
+
+                            ? 'border-amber-200 bg-amber-50/20' 
+
+                            : status === 'red' 
+
+                            ? 'border-rose-200 bg-rose-50/20' 
+
+                            : 'border-slate-200 hover:border-amber-400' 
+
+                        }`} 
+
+                      > 
+
+                        <div className="flex items-center justify-between"> 
+
+                          <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg"> 
+
+                            {topic.strand} 
+
+                          </span> 
+
+ 
+
+                          <span className="text-xs font-bold bg-amber-100 text-amber-900 border border-amber-200 px-2.5 py-0.5 rounded-xl"> 
+
+                            Clip {topic.clip} 
+
+                          </span> 
+
+                        </div> 
+
+ 
+
+                        <div> 
+
+                          <h3 className="font-extrabold text-base text-slate-900 leading-snug"> 
+
+                            {topic.name} 
+
+                          </h3> 
+
+                           
+
+                          {notes && ( 
+
+                            <p className="mt-2 text-xs text-slate-600 bg-white/80 p-2 rounded-xl border border-slate-200/80 flex items-start space-x-1.5 italic"> 
+
+                              <StickyNote className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" /> 
+
+                              <span className="line-clamp-2">{notes}</span> 
+
+                            </p> 
+
+                          )} 
+
+                        </div> 
+
+ 
+
+                        <div className="pt-3 border-t border-slate-100 flex items-center justify-between"> 
+
+                          {status === 'green' && ( 
+
+                            <div className="flex items-center space-x-1.5 text-emerald-600 font-bold text-xs"> 
+
+                              <CheckCircle2 className="w-4 h-4" /> 
+
+                              <span>Green ({score}/5)</span> 
+
+                            </div> 
+
+                          )} 
+
+ 
+
+                          {status === 'orange' && ( 
+
+                            <div className="flex items-center space-x-1.5 text-amber-600 font-bold text-xs"> 
+
+                              <AlertCircle className="w-4 h-4" /> 
+
+                              <span>Orange ({score}/5)</span> 
+
+                            </div> 
+
+                          )} 
+
+ 
+
+                          {status === 'red' && ( 
+
+                            <div className="flex items-center space-x-1.5 text-rose-600 font-bold text-xs"> 
+
+                              <XCircle className="w-4 h-4" /> 
+
+                              <span>Red ({score}/5)</span> 
+
+                            </div> 
+
+                          )} 
+
+ 
+
+                          {status === 'unassessed' && ( 
+
+                            <span className="text-xs font-bold text-slate-400 flex items-center space-x-1"> 
+
+                              <span>Not assessed yet</span> 
+
+                            </span> 
+
+                          )} 
+
+ 
+
+                          <span className="text-xs font-bold text-amber-600 flex items-center space-x-1"> 
+
+                            <span>Assess</span> 
+
+                            <ArrowRight className="w-3.5 h-3.5" /> 
+
+                          </span> 
+
+                        </div> 
+
+                      </div> 
+
+                    ); 
+
+                  })} 
+
+                </div> 
+
+              )} 
+
+            </section> 
+
+          </> 
+
+        )} 
+
+ 
+
+        {/* ================= TAB 2: MY PET HABITAT & INVENTORY ================= */} 
+
+        {activeTab === 'pet' && ( 
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6"> 
+
+             
+
+            {/* Interactive Pet Room Display */} 
+
+            <div className="lg:col-span-2 space-y-4"> 
+
+              <PetRoom petData={petData} /> 
+
+ 
+
+              <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm flex items-center justify-between"> 
+
+                <div> 
+
+                  <h3 className="font-black text-slate-900 text-base">{petData.name} the {PET_SPECIES.find(s => s.id === petData.species)?.name}</h3> 
+
+                  <p className="text-xs text-slate-500 font-medium">Customise wallpaper, wearables & room furniture anytime!</p> 
+
+                </div> 
+
+ 
+
+                <button 
+
+                  onClick={() => setActiveTab('shop')} 
+
+                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-2xl shadow transition flex items-center space-x-1.5" 
+
+                > 
+
+                  <ShoppingBag className="w-4 h-4" /> 
+
+                  <span>Open Shop</span> 
+
+                </button> 
+
+              </div> 
+
+            </div> 
+
+ 
+
+            {/* My Inventory & Equipped Items Management Sidebar */} 
+
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6"> 
+
+              <div> 
+
+                <h3 className="font-black text-lg text-slate-900">My Inventory</h3> 
+
+                <p className="text-xs text-slate-500">Items you own stay in your inventory forever. Tap to equip or unequip!</p> 
+
+              </div> 
+
+ 
+
+              {/* Owned Items List */} 
+
+              <div className="space-y-2 max-h-[340px] overflow-y-auto pr-1"> 
+
+                {(petData.inventory || []).length === 0 ? ( 
+
+                  <p className="text-xs text-slate-400 italic">No items owned yet. Visit the Shop to start customising!</p> 
+
+                ) : ( 
+
+                  (petData.inventory || []).map(itemId => { 
+
+                    const item = ITEM_BY_ID[itemId]; 
+
+                    if (!item) return null; 
+
+ 
+
+                    const isEquipped = item.category === 'wallpaper'  
+
+                      ? petData.wallpaper === itemId 
+
+                      : item.category === 'dye' 
+
+                      ? petData.dye === itemId 
+
+                      : petData.equipped.includes(itemId); 
+
+ 
+
+                    return ( 
+
+                      <div  
+
+                        key={itemId}  
+
+                        className={`p-3 rounded-2xl border flex items-center justify-between text-xs transition ${ 
+
+                          isEquipped  
+
+                            ? 'bg-amber-50/80 border-amber-300 text-amber-950 font-extrabold'  
+
+                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 font-bold' 
+
+                        }`} 
+
+                      > 
+
+                        <div className="flex items-center space-x-2"> 
+
+                          <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-slate-200/80 text-slate-700"> 
+
+                            {SLOT_LABELS[item.slot] || item.category} 
+
+                          </span> 
+
+                          <span>{item.name}</span> 
+
+                        </div> 
+
+ 
+
+                        <button 
+
+                          onClick={() => toggleEquipItem(itemId)} 
+
+                          className={`px-3 py-1 rounded-xl text-[11px] font-black transition ${ 
+
+                            isEquipped  
+
+                              ? 'bg-amber-500 text-slate-950 hover:bg-amber-400'  
+
+                              : 'bg-slate-900 text-white hover:bg-slate-800' 
+
+                          }`} 
+
+                        > 
+
+                          {isEquipped ? 'Equipped ✓' : 'Equip'} 
+
+                        </button> 
+
+                      </div> 
+
+                    ); 
+
+                  }) 
+
+                )} 
+
+              </div> 
+
+ 
+
+              {/* Level Progress */}
+              <div className="pt-4 border-t border-slate-100 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black text-slate-900 flex items-center space-x-1.5">
+                    <Star className="w-4 h-4 text-sky-500" />
+                    <span>Level {levelInfo.level}{levelInfo.isMax ? ' (Max!)' : ''}</span>
+                  </span>
+                  <span className="text-[11px] font-bold text-slate-500">
+                    {levelInfo.isMax ? `${petData.xp || 0} XP` : `${levelInfo.intoLevel} / ${levelInfo.needed} XP`}
+                  </span>
+                </div>
+                <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-sky-400 to-indigo-500 transition-all" style={{ width: `${levelInfo.pct}%` }} />
+                </div>
+                {!levelInfo.isMax && (
+                  <p className="text-[11px] text-slate-500 leading-relaxed">
+                    Level {levelInfo.level + 1} unlocks <strong className="text-slate-700">{nextUnlocks.length} new items</strong>. Earn XP by categorising topics, upgrading Reds and Oranges, adding notes and re-testing.
+                  </p>
+                )}
+              </div>
+
+              {/* Revision Companion Stats */}
+              <div className="pt-4 border-t border-slate-100 space-y-2">
+                <div className="flex justify-between items-center text-xs font-bold text-slate-600">
+                  <span>Coins Balance:</span>
+                  <span className="text-amber-600 font-black flex items-center space-x-1">
+                    <Coins className="w-4 h-4 text-amber-500" />
+                    <span>{petData.coins}</span>
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-xs font-bold text-slate-600">
+                  <span>Items Unlocked:</span>
+                  <span className="text-sky-600 font-black">{unlockedCount} / {SHOP_ITEMS.length}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs font-bold text-slate-600">
+                  <span>Topics Mastered:</span>
+                  <span className="text-emerald-600 font-black">{greenCount} Green</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= TAB 3: PET SHOP & LIVE FITTING ROOM ================= */} 
+
+        {activeTab === 'shop' && ( 
+
+          <div className="space-y-6"> 
+
+             
+
+            {/* Shop Header & Category Filter */} 
+
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4"> 
+
+              <div> 
+
+                <h2 className="text-xl font-black text-slate-900 flex items-center space-x-2"> 
+
+                  <ShoppingBag className="w-6 h-6 text-amber-500" /> 
+
+                  <span>Pet Boutique Catalogue</span> 
+
+                </h2> 
+
+                <p className="text-xs text-slate-500">Preview items live on your companion. Level up by revising to unlock more!</p> 
+
+              </div> 
+
+ 
+
+              <div className="flex items-center space-x-3"> 
+
+                <div className="flex items-center space-x-1.5 bg-amber-100 border border-amber-300 px-4 py-2 rounded-2xl text-amber-950 font-black text-sm"> 
+
+                  <Coins className="w-5 h-5 text-amber-500" /> 
+
+                  <span>{petData.coins} Coins</span> 
+
+                </div> 
+
+              </div> 
+
+            </div> 
+
+ 
+
+            {/* Fitting Room Preview & Catalog Grid Layout */} 
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6"> 
+
+               
+
+              {/* LIVE FITTING ROOM PREVIEW CARD */}
+              <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4 lg:sticky lg:top-20 self-start">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-black text-sm text-slate-900 flex items-center space-x-1.5">
+                    <Eye className="w-4 h-4 text-amber-500" />
+                    <span>Live Fitting Room</span>
+                  </h3>
+                  {previewItem && (
+                    <button
+                      onClick={() => setPreviewItem(null)}
+                      className="text-[11px] font-bold text-slate-400 hover:text-slate-700 underline"
+                    >
+                      Clear Preview
+                    </button>
+                  )}
+                </div>
+
+                <PetRoom
+                  petData={petData}
+                  equippedOverride={previewEquippedList}
+                  wallpaperOverride={previewWallpaper}
+                  dyeOverride={previewDye}
+                />
+
+                {previewItem ? (
+                  <div className="bg-amber-50 border border-amber-200 p-3 rounded-2xl text-xs space-y-2">
+                    <div className="font-extrabold text-amber-950 flex items-center justify-between">
+                      <span>Previewing: {previewItem.name}</span>
+                      <span className="text-amber-600">{previewItem.price} Coins</span>
+                    </div>
+                    <p className="text-slate-600 text-[11px]">{previewItem.desc}</p>
+                    {!isItemUnlocked(previewItem, levelInfo.level) && !ownedIds.includes(previewItem.id) && (
+                      <p className="text-[11px] font-black text-sky-700 flex items-center space-x-1">
+                        <Lock className="w-3.5 h-3.5" />
+                        <span>Unlocks at Level {previewItem.level}</span>
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-400 text-center italic">
+                    Click any item in the catalogue to preview how it looks, even locked ones!
+                  </p>
+                )}
+
+                {/* Level progress reminder */}
+                <div className="bg-sky-50 border border-sky-200 rounded-2xl p-3 space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px] font-black text-sky-900">
+                    <span>Level {levelInfo.level}</span>
+                    <span>{unlockedCount} / {SHOP_ITEMS.length} items unlocked</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-white overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-sky-400 to-indigo-500" style={{ width: `${levelInfo.pct}%` }} />
+                  </div>
+                  {!levelInfo.isMax && (
+                    <p className="text-[11px] text-sky-800">
+                      {levelInfo.needed - levelInfo.intoLevel} XP until Level {levelInfo.level + 1} ({nextUnlocks.length} new items)
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* SHOP CATALOGUE ITEMS */}
+              <div className="lg:col-span-2 space-y-4">
+                {/* Shop Category Tabs */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  {[{ id: 'all', label: 'All Items' }, ...SHOP_CATEGORIES].map(cat => {
+                    const inCategory = SHOP_ITEMS.filter(item => cat.id === 'all' || item.category === cat.id);
+                    const unlockedHere = inCategory.filter(item => isItemUnlocked(item, levelInfo.level)).length;
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => setShopCategory(cat.id)}
+                        className={`px-3.5 py-1.5 rounded-2xl text-xs font-black whitespace-nowrap transition ${
+                          shopCategory === cat.id
+                            ? 'bg-slate-900 text-white shadow'
+                            : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                        }`}
+                      >
+                        {cat.label}
+                        <span className={`ml-1.5 text-[10px] ${shopCategory === cat.id ? 'text-slate-300' : 'text-slate-400'}`}>
+                          {unlockedHere}/{inCategory.length}
+                        </span>
+                      </button>
+                    );
+                  })}
+                  <label className="ml-auto flex items-center space-x-1.5 text-[11px] font-bold text-slate-500 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={hideLocked}
+                      onChange={(e) => setHideLocked(e.target.checked)}
+                      className="accent-amber-500"
+                    />
+                    <span>Hide locked</span>
+                  </label>
+                </div>
+
+                {/* Items Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {shopFilteredItems.map((item) => {
+                    const isOwned = ownedIds.includes(item.id);
+                    const isLocked = !isOwned && !isItemUnlocked(item, levelInfo.level);
+                    const canAfford = petData.coins >= item.price;
+                    const isCurrentlyEquipped = item.category === 'wallpaper'
+                      ? petData.wallpaper === item.id
+                      : item.category === 'dye'
+                      ? petData.dye === item.id
+                      : petData.equipped.includes(item.id);
+
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => setPreviewItem(item)}
+                        className={`rounded-3xl p-5 border-2 text-left cursor-pointer transition-all duration-200 hover:shadow-md flex flex-col justify-between space-y-4 ${
+                          isLocked ? 'bg-slate-50' : 'bg-white'
+                        } ${
+                          previewItem?.id === item.id
+                            ? 'border-amber-500 ring-2 ring-amber-400'
+                            : 'border-slate-200/80 hover:border-amber-300'
+                        }`}
+                      >
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px] font-black uppercase text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200">
+                                {SLOT_LABELS[item.slot] || item.category}
+                              </span>
+                              <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg border ${
+                                isLocked ? 'text-sky-700 bg-sky-50 border-sky-200' : 'text-slate-500 bg-slate-50 border-slate-200'
+                              }`}>
+                                Lv {item.level}
+                              </span>
+                            </div>
+                            <span className="text-xs font-black text-slate-700 flex items-center space-x-1">
+                              <Coins className="w-3.5 h-3.5 text-amber-500" />
+                              <span>{item.price}</span>
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <ItemSwatch item={item} />
+                            <h3 className={`font-extrabold text-base ${isLocked ? 'text-slate-500' : 'text-slate-900'}`}>{item.name}</h3>
+                          </div>
+                          <p className="text-xs text-slate-500">{item.desc}</p>
+                        </div>
+
+                        {/* Button Actions */}
+                        {isOwned ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleEquipItem(item.id);
+                            }}
+                            className={`w-full py-2 font-black text-xs rounded-2xl transition ${
+                              isCurrentlyEquipped
+                                ? 'bg-amber-500 text-slate-950 hover:bg-amber-400'
+                                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                            }`}
+                          >
+                            {isCurrentlyEquipped ? 'Equipped ✓' : 'Equip Item'}
+                          </button>
+                        ) : isLocked ? (
+                          <div className="w-full py-2.5 font-black text-xs rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center space-x-1.5">
+                            <Lock className="w-3.5 h-3.5" />
+                            <span>Unlocks at Level {item.level}</span>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              buyItem(item);
+                            }}
+                            disabled={!canAfford}
+                            className={`w-full py-2.5 font-black text-xs rounded-2xl transition flex items-center justify-center space-x-1.5 ${
+                              canAfford
+                                ? 'bg-slate-900 hover:bg-slate-800 text-white shadow'
+                                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                            }`}
+                          >
+                            <span>{canAfford ? `Buy for ${item.price} Coins` : 'Need More Coins'}</span>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </main> 
+
+ 
+
+      {/* Assessment Modal */} 
+
+      {activeModalTopic && ( 
+
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"> 
+
+          <div  
+
+            className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6 my-8" 
+
+            onClick={(e) => e.stopPropagation()} 
+
+          > 
+
+            <div className="flex items-start justify-between border-b border-slate-100 pb-4"> 
+
+              <div> 
+
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full"> 
+
+                  {activeModalTopic.strand} • Clip {activeModalTopic.clip} 
+
+                </span> 
+
+                <h2 className="text-2xl font-black text-slate-900 mt-2">{activeModalTopic.name}</h2> 
+
+              </div> 
+
+              <button  
+
+                onClick={closeModal} 
+
+                className="p-2 rounded-2xl bg-slate-100 text-slate-500 hover:bg-slate-200 transition" 
+
+              > 
+
+                ✕ 
+
+              </button> 
+
+            </div> 
+
+ 
+
+            <div className="bg-slate-900 text-white rounded-2xl p-5 space-y-3 shadow-md"> 
+
+              <div className="flex items-center justify-between"> 
+
+                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Step 1: MathsWatch Diagnostic</span> 
+
+                <button 
+
+                  onClick={() => copyClipNumber(activeModalTopic.clip)} 
+
+                  className="px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center space-x-1.5 transition" 
+
+                > 
+
+                  {copiedClip ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />} 
+
+                  <span>{copiedClip ? 'Copied Clip #' : `Copy Clip ${activeModalTopic.clip}`}</span> 
+
+                </button> 
+
+              </div> 
+
+ 
+
+              <p className="text-xs text-slate-300 leading-relaxed"> 
+
+                Open <strong>MathsWatch (vle.mathswatch.co.uk)</strong>, search for <strong>Clip {activeModalTopic.clip}</strong>, and attempt <strong>3 standard questions</strong> and <strong>2 hard questions</strong>. 
+
+              </p> 
+
+            </div> 
+
+ 
+
+            <div className="space-y-3"> 
+
+              <label className="block text-xs font-black uppercase tracking-wider text-slate-500"> 
+
+                Step 2: How many questions did you get correct out of 5? 
+
+              </label> 
+
+ 
+
+              <div className="grid grid-cols-6 gap-2"> 
+
+                {[0, 1, 2, 3, 4, 5].map((scoreNum) => { 
+
+                  let colorClass = "bg-slate-100 text-slate-800 hover:bg-slate-200 border-slate-200"; 
+
+                  if (modalScore === scoreNum) { 
+
+                    if (scoreNum === 5) colorClass = "bg-emerald-500 text-white border-emerald-600 font-black"; 
+
+                    else if (scoreNum >= 3) colorClass = "bg-amber-500 text-white border-amber-600 font-black"; 
+
+                    else colorClass = "bg-rose-500 text-white border-rose-600 font-black"; 
+
+                  } 
+
+ 
+
+                  return ( 
+
+                    <button 
+
+                      key={scoreNum} 
+
+                      onClick={() => setModalScore(scoreNum)} 
+
+                      className={`p-3 rounded-2xl border-2 text-center text-sm font-bold transition-all ${colorClass}`} 
+
+                    > 
+
+                      {scoreNum}/5 
+
+                    </button> 
+
+                  ); 
+
+                })} 
+
+              </div> 
+
+            </div> 
+
+ 
+
+            {modalScore !== null && ( 
+
+              <div className="p-4 rounded-2xl border-2 space-y-2 animate-fadeIn"> 
+
+                {modalScore === 5 && ( 
+
+                  <div className="bg-emerald-50 border-emerald-200 text-emerald-900 p-4 rounded-xl space-y-2"> 
+
+                    <div className="flex items-center space-x-2 font-black text-sm text-emerald-700"> 
+
+                      <CheckCircle2 className="w-5 h-5" /> 
+
+                      <span>🟢 Categorised as GREEN (Mastered)</span> 
+
+                    </div> 
+
+                    <p className="text-xs text-emerald-800 leading-relaxed"> 
+
+                      <strong>Action Plan:</strong> Perfect score! Park this topic for 2 to 3 weeks. Return later for a quick spaced-repetition check to ensure you retain it for your exams. 
+
+                    </p> 
+
+                  </div> 
+
+                )} 
+
+ 
+
+                {modalScore >= 3 && modalScore <= 4 && ( 
+
+                  <div className="bg-amber-50 border-amber-200 text-amber-900 p-4 rounded-xl space-y-2"> 
+
+                    <div className="flex items-center space-x-2 font-black text-sm text-amber-700"> 
+
+                      <AlertCircle className="w-5 h-5" /> 
+
+                      <span>🟠 Categorised as ORANGE (Targeted Practice)</span> 
+
+                    </div> 
+
+                    <p className="text-xs text-amber-800 leading-relaxed"> 
+
+                      <strong>Action Plan:</strong> You understand the basics, but missed a couple of questions. Watch the key example clips on MathsWatch Clip {activeModalTopic.clip} or CorbettMaths, do 5 targeted practice questions on weak areas, and re-test! 
+
+                    </p> 
+
+                  </div> 
+
+                )} 
+
+ 
+
+                {modalScore <= 2 && ( 
+
+                  <div className="bg-rose-50 border-rose-200 text-rose-900 p-4 rounded-xl space-y-2"> 
+
+                    <div className="flex items-center space-x-2 font-black text-sm text-rose-700"> 
+
+                      <XCircle className="w-5 h-5" /> 
+
+                      <span>🔴 Categorised as RED (Action Required)</span> 
+
+                    </div> 
+
+                    <p className="text-xs text-rose-800 leading-relaxed"> 
+
+                      <strong>Action Plan:</strong>  
+
+                      <ol className="list-decimal pl-4 mt-1 space-y-1"> 
+
+                        <li>Watch the full instructional video on MathsWatch Clip {activeModalTopic.clip}.</li> 
+
+                        <li>Copy 2 worked examples clearly into your revision notebook.</li> 
+
+                        <li>Attempt textbook / CorbettMaths practice questions.</li> 
+
+                        <li>Re-test when ready to move this topic to Orange or Green!</li> 
+
+                      </ol> 
+
+                    </p> 
+
+                  </div> 
+
+                )} 
+
+              </div> 
+
+            )} 
+
+ 
+
+            <div className="space-y-2"> 
+
+              <span className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider"> 
+
+                Or set status directly: 
+
+              </span> 
+
+              <div className="grid grid-cols-3 gap-2"> 
+
+                <button 
+
+                  onClick={() => saveTopicAssessment('green')} 
+
+                  className="py-2.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs flex items-center justify-center space-x-1.5 shadow-sm transition" 
+
+                > 
+
+                  <CheckCircle2 className="w-4 h-4" /> 
+
+                  <span>Set Green</span> 
+
+                </button> 
+
+ 
+
+                <button 
+
+                  onClick={() => saveTopicAssessment('orange')} 
+
+                  className="py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs flex items-center justify-center space-x-1.5 shadow-sm transition" 
+
+                > 
+
+                  <AlertCircle className="w-4 h-4" /> 
+
+                  <span>Set Orange</span> 
+
+                </button> 
+
+ 
+
+                <button 
+
+                  onClick={() => saveTopicAssessment('red')} 
+
+                  className="py-2.5 px-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs flex items-center justify-center space-x-1.5 shadow-sm transition" 
+
+                > 
+
+                  <XCircle className="w-4 h-4" /> 
+
+                  <span>Set Red</span> 
+
+                </button> 
+
+              </div> 
+
+            </div> 
+
+ 
+
+            <div className="space-y-2 pt-2 border-t border-slate-100"> 
+
+              <label className="block text-xs font-bold text-slate-700 flex items-center space-x-1.5"> 
+
+                <StickyNote className="w-4 h-4 text-amber-500" /> 
+
+                <span>My Personal Topic Notes / Key Formulas to Remember:</span> 
+
+              </label> 
+
+              <textarea 
+
+                value={modalNotes} 
+
+                onChange={(e) => setModalNotes(e.target.value)} 
+
+                placeholder="Write reminders here (e.g. 'Remember to reverse inequality sign when dividing by negative number')..." 
+
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium focus:outline-none focus:border-amber-500 h-20 resize-none" 
+
+              /> 
+
+            </div> 
+
+ 
+
+            <div className="flex items-center justify-end space-x-3 pt-2"> 
+
+              <button 
+
+                onClick={closeModal} 
+
+                className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition" 
+
+              > 
+
+                Cancel 
+
+              </button> 
+
+              <button 
+
+                onClick={() => saveTopicAssessment()} 
+
+                className="px-6 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs shadow-md transition" 
+
+              > 
+
+                Save Progress & Earn Coins 
+
+              </button> 
+
+            </div> 
+
+ 
+
+          </div> 
+
+        </div> 
+
+      )} 
+
+ 
+
+      {/* Footer */} 
+
+      <footer className="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800"> 
+
+        <div className="max-w-7xl mx-auto px-4 text-center space-y-2"> 
+
+          <p className="font-semibold text-slate-300">Year 11 GCSE Higher Maths Revision Companion</p> 
+
+          <p className="text-[11px] text-slate-500">Designed for Grade 7+ Target Students • Follow the algorithm, clear the Reds, turn everything Green!</p> 
+
+        </div> 
+
+      </footer> 
+
+ 
+
+    </div> 
+
+  ); 
+
+} 
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
